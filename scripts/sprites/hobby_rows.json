@@ -38,5 +38,15 @@
       "fps": 8,
       "glow": true
     }
-  ]
+  ],
+  "redo": {
+    "killua": [
+      {
+        "name": "carry",
+        "height": 236,
+        "anchor": 0.5,
+        "ground": 243
+      }
+    ]
+  }
 }
