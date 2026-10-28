@@ -370,6 +370,9 @@ let englishLines: [String: Lines] = [
     "luffy": Lines(
         shortName: "Luffy",
         lines: [
+            .inflate: ["Gum-Gum... Balloon!", "Deep breath... pffffff!"],
+            .inflateDone: ["Shishishi! Flying is fun!", "The view from the sky is the best!"],
+            .eat: ["Meat! *munch munch*", "Shishishi, this meat is the best!"],
             .happy: ["Shishishi!", "That's awesome!"],
             .bored: ["I'm hungry...", "Where's the meat?"],
             .tedious: ["Booooring...", "Can we eat now?"],
@@ -402,6 +405,9 @@ let englishLines: [String: Lines] = [
     "zoro": Lines(
         shortName: "Zoro",
         lines: [
+            .lift: ["Warm-up time.", "One more set."],
+            .liftDone: ["Getting better.", "Good. Muscles are warm."],
+            .sake: ["A drink after training.", "Sake. Just right."],
             .happy: ["Heh.", "Not bad."],
             .bored: ["Time for a nap.", "Where's the sake?"],
             .tedious: ["Zzz...", "Wake me when there's a fight."],
@@ -698,6 +704,8 @@ let englishLines: [String: Lines] = [
     "killua": Lines(
         shortName: "Killua",
         lines: [
+            .yoyo: ["Watch this, electric yo-yo!", "Fully charged. Let's see how it goes!"],
+            .yoyoDone: ["Heh, nailed it.", "Zap! Bullseye."],
             .happy: ["Heh.", "Chocolate time!"],
             .bored: ["Boring.", "Got any chocolate?"],
             .tedious: ["Ugh, lame.", "Whatever."],

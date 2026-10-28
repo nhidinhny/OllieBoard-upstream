@@ -369,6 +369,9 @@ let vietnameseLines: [String: Lines] = [
     "luffy": Lines(
         shortName: "Luffy",
         lines: [
+            .inflate: ["Gomu Gomu no... Bóng bay!", "Hít thật sâu... phùùù!"],
+            .inflateDone: ["Shishishi! Bay vui ghê!", "Trên trời nhìn thích thật!"],
+            .eat: ["Thịt! *nhai nhai*", "Shishishi, thịt ngon nhất!"],
             .happy: ["Shishishi!", "Mình sẽ trở thành Vua Hải Tặc!"],
             .bored: ["Chán quá! Đi phiêu lưu thôi!", "Đói bụng... thịt đâu?"],
             .tedious: ["Đói quá... không đi nổi...", "Sanji, cho xin miếng thịt!"],
@@ -401,6 +404,9 @@ let vietnameseLines: [String: Lines] = [
     "zoro": Lines(
         shortName: "Zoro",
         lines: [
+            .lift: ["Khởi động chút.", "Thêm một hiệp nữa."],
+            .liftDone: ["Khá hơn rồi đấy.", "Được. Người nóng lên rồi."],
+            .sake: ["Tập xong thì làm một ly.", "Sake. Chuẩn rồi."],
             .happy: ["Hừ. Không tệ.", "Có rượu thì tốt hơn."],
             .bored: ["Ngủ một giấc vậy.", "Không có ai đáng để chém à?"],
             .tedious: ["Phiền phức.", "Zzz..."],
@@ -694,6 +700,8 @@ let vietnameseLines: [String: Lines] = [
     "killua": Lines(
         shortName: "Killua",
         lines: [
+            .yoyo: ["Nhìn cho kỹ, yoyo điện của tôi đây!", "Sạc đầy rồi. Thử xem nào!"],
+            .yoyoDone: ["Hề, đỉnh thật.", "Xẹt! Trúng phóc."],
             .happy: ["Chocorobot ngon nhất!", "Hehe, vui đấy."],
             .bored: ["Chán ghê... ăn socola thôi.", "Có gì vui không?"],
             .tedious: ["Phiền quá đi.", "Mệt thật, cho tôi kẹo đi."],
