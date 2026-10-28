@@ -1,4 +1,4 @@
-"""Checks for build_hobby_rows.py and gen_hobby_prompts.py with synthetic pictures in an isolated folder."""
+"""Checks for build_skill_rows.py and gen_skill_prompts.py with synthetic pictures in an isolated folder."""
 import contextlib
 import io
 import json
@@ -11,7 +11,7 @@ from unittest.mock import patch
 import numpy as np
 from PIL import Image, ImageDraw
 
-import build_hobby_rows as build
+import build_skill_rows as build
 
 MAGENTA = (255, 0, 255)
 
@@ -32,32 +32,32 @@ def grid_picture(path, cols=4, rows=2, wide=False):
     im.save(path)
 
 
-class HobbyRowTests(unittest.TestCase):
+class SkillRowTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix="ollieboard-hobby-test-")
+        self.temp = tempfile.TemporaryDirectory(prefix="ollieboard-skill-test-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        (self.root / "assets" / "hobby").mkdir(parents=True)
+        (self.root / "assets" / "skills").mkdir(parents=True)
         self.sprites = self.root / "Sprites"
         self.sprites.mkdir()
-        grid_picture(self.root / "assets" / "hobby" / "luffy_demo.png", wide=True)
+        grid_picture(self.root / "assets" / "skills" / "luffy_demo.png", wide=True)
         patcher = patch.multiple(build, ROOT=str(self.root), SPRITES=str(self.sprites))
         patcher.start()
         self.addCleanup(patcher.stop)
 
     def run_build(self, *rows):
         with contextlib.redirect_stdout(io.StringIO()):
-            return build.build_hobby("luffy", list(rows))
+            return build.build_skill("luffy", list(rows))
 
-    def test_row_is_eight_cells_and_listed_in_hobby_json_entry(self):
+    def test_row_is_eight_cells_and_listed_in_skills_json_entry(self):
         meta = self.run_build({"name": "demo", "height": 200, "anchor": 0.3, "fps": 6})
         self.assertEqual(meta, {"rows": [{"name": "demo", "frames": 8, "fps": 6, "loop": True, "shift": 0}]})
-        sheet = Image.open(self.sprites / "luffy-hobby.png")
+        sheet = Image.open(self.sprites / "luffy-skills.png")
         self.assertEqual(sheet.size, (2048, 256))
 
     def test_nothing_touches_the_cell_edge_and_feet_are_on_the_ground_line(self):
         self.run_build({"name": "demo", "height": 200, "anchor": 0.3, "cx": 88, "shift": 20, "fps": 6})
-        a = np.asarray(Image.open(self.sprites / "luffy-hobby.png"))[..., 3]
+        a = np.asarray(Image.open(self.sprites / "luffy-skills.png"))[..., 3]
         for i in range(8):
             cell = a[:, i * 256:(i + 1) * 256]
             ys, xs = np.nonzero(cell > 24)
@@ -66,10 +66,10 @@ class HobbyRowTests(unittest.TestCase):
             self.assertAlmostEqual(int(ys.max()), build.GROUND_Y, delta=3)
 
     def test_first_frames_and_grid_options(self):
-        grid_picture(self.root / "assets" / "hobby" / "luffy_six.png", cols=3, rows=2)
+        grid_picture(self.root / "assets" / "skills" / "luffy_six.png", cols=3, rows=2)
         meta = self.run_build({"name": "six", "grid": [3, 2], "frames": 6, "height": 200, "fps": 8})
         self.assertEqual(meta["rows"][0]["frames"], 6)
-        a = np.asarray(Image.open(self.sprites / "luffy-hobby.png"))[..., 3]
+        a = np.asarray(Image.open(self.sprites / "luffy-skills.png"))[..., 3]
         self.assertTrue((a[:, 6 * 256:] == 0).all())          # the last two cells stay empty
 
     def test_head_norm_keeps_the_head_width(self):
@@ -80,9 +80,9 @@ class HobbyRowTests(unittest.TestCase):
             head = 80 - i * 4
             d.ellipse((x + 128 - head // 2, y + 10, x + 128 + head // 2, y + 10 + head), fill=(60, 140, 40))
             d.rectangle((x + 128 - 20 - i * 6, y + 10 + head, x + 128 + 20 + i * 6, y + 250), fill=(40, 120, 220))
-        picture.save(self.root / "assets" / "hobby" / "luffy_fat.png")
+        picture.save(self.root / "assets" / "skills" / "luffy_fat.png")
         self.run_build({"name": "fat", "height": 200, "fps": 6, "head_norm": True, "loop": False})
-        a = np.asarray(Image.open(self.sprites / "luffy-hobby.png"))
+        a = np.asarray(Image.open(self.sprites / "luffy-skills.png"))
         widths = []
         for i in range(8):
             cell = a[:, i * 256:(i + 1) * 256, 3]
@@ -93,12 +93,12 @@ class HobbyRowTests(unittest.TestCase):
         self.assertLess(max(widths) - min(widths), 6)
 
     def test_magenta_fringe_and_sparkle_are_removed(self):
-        grid_picture(self.root / "assets" / "hobby" / "luffy_demo.png")
-        im = Image.open(self.root / "assets" / "hobby" / "luffy_demo.png")
+        grid_picture(self.root / "assets" / "skills" / "luffy_demo.png")
+        im = Image.open(self.root / "assets" / "skills" / "luffy_demo.png")
         ImageDraw.Draw(im).polygon([(930, 515), (950, 495), (970, 515), (950, 535)], fill=(255, 130, 255))   # corner sparkle
-        im.save(self.root / "assets" / "hobby" / "luffy_demo.png")
+        im.save(self.root / "assets" / "skills" / "luffy_demo.png")
         self.run_build({"name": "demo", "height": 200, "fps": 6})
-        a = np.asarray(Image.open(self.sprites / "luffy-hobby.png"))
+        a = np.asarray(Image.open(self.sprites / "luffy-skills.png"))
         solid = a[a[..., 3] > 200][:, :3].astype(int)
         self.assertEqual(int(((solid[:, 0] > 200) & (solid[:, 2] > 200) & (solid[:, 1] < 80)).sum()), 0)    # no magenta left
         last = a[:, 7 * 256:, 3]

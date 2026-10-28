@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Builds a character's hobby sheet: Sources/OllieBoard/Resources/Sprites/<id>-hobby.png (one 8-frame row per hobby)
-and its entry in hobby.json, from Gemini pictures assets/hobby/<id>_<name>.png.
+"""Builds a character's skills sheet: Sources/OllieBoard/Resources/Sprites/<id>-skills.png (one 8-frame row per skill)
+and its entry in skills.json, from Gemini pictures assets/skills/<id>_<name>.png.
 
-A hobby row has the character and the prop drawn together (the dumbbell, the bottle, a puffed-up belly), so nothing is
+A skill row has the character and the prop drawn together (the dumbbell, the bottle, a puffed-up belly), so nothing is
 pasted next to the sprite at run time. Every picture holds the drawings in a grid on flat magenta; each drawing is cut
 out, keyed (soft edges, no magenta fringe, Gemini's corner sparkle removed), the row gets one scale and the drawings keep
 their place relative to each other, so a prop that must not move does not move. Skin is graded to the game's tone with
-assemble.py's own skin grading, like a normal sheet. Options per row: see hobby_rows.json.
+assemble.py's own skin grading, like a normal sheet. Options per row: see skill_rows.json.
 
 Usage (from the repository root; needs pillow and numpy):
-  .venv/bin/python scripts/sprites/build_hobby_rows.py luffy zoro      # only these ids (default: all in hobby_rows.json)
-  .venv/bin/python scripts/sprites/build_hobby_rows.py --redo luffy    # also redraw rows of the main sheet, see below
+  .venv/bin/python scripts/sprites/build_skill_rows.py luffy zoro      # only these ids (default: all in skill_rows.json)
+  .venv/bin/python scripts/sprites/build_skill_rows.py --redo luffy    # also redraw rows of the main sheet, see below
 
 --redo: rows of the main sheet that were drawn again (assets/redo/<id>_<row>.png, same grid format, options under "redo" in
-hobby_rows.json) replace those rows of <id>.png in place (same row index and frame count as layout.json).
+skill_rows.json) replace those rows of <id>.png in place (same row index and frame count as layout.json).
 """
 import argparse
 import json
@@ -128,13 +128,13 @@ def grade(rows, cid):
     return [Image.fromarray(assemble.grade_skin(a, src, dst, assemble.SKIN_STRENGTH), "RGBA") for a in arrays]
 
 
-def build_hobby(cid, rows):
-    print(f"{cid}: hobby rows")
-    images = [free_row(os.path.join(ROOT, "assets", "hobby", f"{cid}_{o['name']}.png"), o) for o in rows]
+def build_skill(cid, rows):
+    print(f"{cid}: skill rows")
+    images = [free_row(os.path.join(ROOT, "assets", "skills", f"{cid}_{o['name']}.png"), o) for o in rows]
     sheet = Image.new("RGBA", (CELL * 8, CELL * len(rows)))
     for i, im in enumerate(grade(images, cid)):
         sheet.alpha_composite(im, (0, i * CELL))
-    sheet.save(os.path.join(SPRITES, f"{cid}-hobby.png"))
+    sheet.save(os.path.join(SPRITES, f"{cid}-skills.png"))
     return {"rows": [dict(name=o["name"], frames=o.get("frames", 8), fps=o["fps"], loop=o.get("loop", True),
                           shift=o.get("shift", 0)) for o in rows]}
 
@@ -157,16 +157,16 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("ids", nargs="*"); ap.add_argument("--redo", action="store_true")
     o = ap.parse_args()
-    config = json.load(open(os.path.join(HERE, "hobby_rows.json")))
+    config = json.load(open(os.path.join(HERE, "skill_rows.json")))
     ids = o.ids or [k for k in config if not k.startswith("_") and k != "redo"]
-    meta_path = os.path.join(SPRITES, "hobby.json")
+    meta_path = os.path.join(SPRITES, "skills.json")
     meta = json.load(open(meta_path)) if os.path.exists(meta_path) else {}
     for cid in ids:
-        if cid not in config: sys.exit(f"{cid} is not in hobby_rows.json")
+        if cid not in config: sys.exit(f"{cid} is not in skill_rows.json")
         if o.redo:
             redo_main(cid, config.get("redo", {}).get(cid, []))
         else:
-            meta[cid] = build_hobby(cid, config[cid])
+            meta[cid] = build_skill(cid, config[cid])
     if not o.redo:
         json.dump(meta, open(meta_path, "w"), indent=2, sort_keys=True); open(meta_path, "a").write("\n")
 

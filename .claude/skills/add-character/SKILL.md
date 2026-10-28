@@ -40,7 +40,7 @@ Read [update-sprites](../update-sprites/SKILL.md), select the user's requested p
 
 If the browser or image tools are unavailable, leave the task/prompts ready and report art as pending. Do not report a character complete while its sheet or visual checks are missing.
 
-Once the character has a sheet it can also get hobbies (an animation drawn together with a prop) and rows redrawn from its current sprite: see `update-sprites/references/hobby-rows.md`. That route reuses the sprite in the game as Gemini's reference, which keeps the proportions on-model.
+Once the character has a sheet it can also get skills (an animation drawn together with a prop) and rows redrawn from its current sprite: see `update-sprites/references/hobby-rows.md`. That route reuses the sprite in the game as Gemini's reference, which keeps the proportions on-model.
 
 ## Verify and hand off
 
