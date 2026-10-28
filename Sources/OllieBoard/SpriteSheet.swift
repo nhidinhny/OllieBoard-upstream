@@ -5,8 +5,8 @@ enum Anim: String, CaseIterable {
     /// Each character's two special moves (see Skill); empty for agent mascots.
     case skill1, skill2
 
-    /// Hobbies (see Pet.hobbyPlan): each is drawn, prop included, in the character's own `<id>-hobby.png`, which only
-    /// has the rows of that character's hobbies (hobby.json lists them).
+    /// Skills drawn together with their prop (see Pet.drawnSkillPlan): each is a row in the character's own
+    /// `<id>-skills.png`, which only has the rows of that character's skills (skills.json lists them).
     case yoyo, inflate, eat, lift, sake
 
     var isSkill: Bool { self == .skill1 || self == .skill2 }
@@ -18,9 +18,9 @@ enum Effect: String, CaseIterable {
     case chest, flower1, flower2, flower3, flame, glow, puff, wall, coin, boom, tank, truck, dog, rabbit
 }
 
-/// One row of a character's hobby sheet (hobby.json): how many frames it has, how fast it plays and how far the
+/// One row of a character's skills sheet (skills.json): how many frames it has, how fast it plays and how far the
 /// sprite is nudged sideways (in points, towards the way the character faces) so the character stands on the pet's spot.
-struct HobbyRow: Decodable {
+struct SkillRow: Decodable {
     let name: String
     let frames: Int
     let fps: Double
@@ -55,10 +55,10 @@ final class SpriteSheet {
         return try! JSONDecoder().decode(SheetLayout.self, from: data)
     }()
 
-    /// Hobby rows per character id; empty when there is no hobby.json.
-    private static let hobbyRows: [String: [HobbyRow]] = {
-        guard let data = try? Data(contentsOf: directory.appendingPathComponent("hobby.json")) else { return [:] }
-        struct File: Decodable { let rows: [HobbyRow] }
+    /// Skills-sheet rows per character id; empty when there is no skills.json.
+    private static let skillRows: [String: [SkillRow]] = {
+        guard let data = try? Data(contentsOf: directory.appendingPathComponent("skills.json")) else { return [:] }
+        struct File: Decodable { let rows: [SkillRow] }
         return ((try? JSONDecoder().decode([String: File].self, from: data)) ?? [:]).mapValues(\.rows)
     }()
 
@@ -94,26 +94,27 @@ final class SpriteSheet {
             info[anim] = row
             frames[anim] = Self.cells(of: characterID, (0..<row.frames).map { ($0, row.row) })
         }
-        // The character's hobbies, one row each in <id>-hobby.png.
-        for (index, row) in (Self.hobbyRows[characterID] ?? []).enumerated() {
+        // The character's drawn skills, one row each in <id>-skills.png.
+        for (index, row) in (Self.skillRows[characterID] ?? []).enumerated() {
             guard let anim = Anim(rawValue: row.name) else { continue }
             info[anim] = SheetLayout.AnimInfo(row: index, frames: row.frames, fps: row.fps, loop: row.loop)
             shifts[anim] = row.shift
-            frames[anim] = Self.cells(of: "\(characterID)-hobby", (0..<row.frames).map { ($0, index) })
+            frames[anim] = Self.cells(of: "\(characterID)-skills", (0..<row.frames).map { ($0, index) })
         }
     }
 
-    /// Whether this character's sheets draw `anim` (hobbies exist only for the characters that have them).
+    /// Whether this character's sheets draw `anim` (the drawn skills exist only for the characters that have them).
     func has(_ anim: Anim) -> Bool { frames[anim] != nil }
 
-    /// Whether the sheet has the animation(s) a hobby needs.
-    func hasHobby(_ hobby: Hobby) -> Bool {
-        switch hobby {
+    /// Whether the sheet has the animation(s) a skill needs (the skills of the main sheet always do).
+    func hasSkill(_ skill: Skill) -> Bool {
+        switch skill {
         case .yoyo: return has(.yoyo)
         case .balloon: return has(.inflate)
         case .eat: return has(.eat)
         case .lift: return has(.lift)
         case .sake: return has(.sake)
+        default: return true
         }
     }
 

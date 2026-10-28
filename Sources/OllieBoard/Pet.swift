@@ -332,14 +332,12 @@ final class Pet {
         case .social:
             return socialPlan()
         case .skill:
-            guard let skill = character.skills.randomElement() else { return plan(for: .wander) }
+            guard let skill = availableSkills.randomElement() else { return plan(for: .wander) }
             return skillPlan(skill)
-        case .hobby:
-            return hobbyPlan()
         }
     }
 
-    // MARK: - Hobbies
+    // MARK: - Skills drawn with their prop
 
     /// Luffy is floating up or down as a balloon: only the screen-edge mirror cares (it would copy the sprite every frame).
     private var flying = false
@@ -353,23 +351,13 @@ final class Pet {
         }
     }
 
-    /// The hobbies this character's sheet actually draws (a hobby without its rows in the hobby sheet is not offered).
-    var availableHobbies: [Hobby] { character.hobbies.filter { sheet.hasHobby($0) } }
+    /// The skills this character's sheets actually draw (one without its rows in the skills sheet is not offered).
+    var availableSkills: [Skill] { character.skills.filter { sheet.hasSkill($0) } }
 
-    /// Picked from the right-click menu.
-    func useHobby(_ hobby: Hobby) {
-        guard !dragging, availableHobbies.contains(hobby) else { return }
-        interrupt(hobbyPlan(hobby))
-    }
-
-    /// A hobby from the character's story, always a cheerful one: the one asked for, or one of the character's own.
-    /// The prop of each hobby is drawn in the character's own hobby row (`<id>-hobby.png`, see hobby.json).
-    private func hobbyPlan(_ pick: Hobby? = nil) -> [Step] {
+    /// A skill whose prop is drawn in the character's own skills sheet (`<id>-skills.png`, see skills.json).
+    private func drawnSkillPlan(_ skill: Skill) -> [Step] {
         let f = facing
-        guard let hobby = pick ?? availableHobbies.randomElement() else {
-            return plan(for: .wander)
-        }
-        switch hobby {
+        switch skill {
         case .yoyo:
             return engage([.face(f), .line(.yoyo, to: nil), .play(.yoyo, 5.5),
                            .play(.happy, 1.2, effect: .sparkle, say: .yoyoDone)])
@@ -383,6 +371,8 @@ final class Pet {
         case .sake:
             return engage([.face(f), .play(.sake, 1.4, say: .sake), .play(.sake, 5.4),
                            .play(.happy, 1.4, effect: .note)])
+        default:
+            return plan(for: .wander)
         }
     }
 
@@ -759,12 +749,14 @@ final class Pet {
 
     /// A special move picked from the right-click menu.
     func useSkill(_ skill: Skill) {
-        guard agent == nil, !dragging, !leaving else { return }
+        guard agent == nil, !dragging, !leaving, availableSkills.contains(skill) else { return }
         interrupt(skillPlan(skill))
     }
 
     private func skillPlan(_ skill: Skill) -> [Step] {
         switch skill {
+        case .yoyo, .balloon, .eat, .lift, .sake:
+            return drawnSkillPlan(skill)
         case .mindRead:
             // Whatever app you are in is what's on your mind.
             let app = NSWorkspace.shared.frontmostApplication.flatMap { $0 == NSRunningApplication.current ? nil : $0.localizedName }

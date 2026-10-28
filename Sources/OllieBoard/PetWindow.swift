@@ -953,28 +953,15 @@ final class PetView: NSView {
 
     /// Right-click lists the character's special moves.
     override func rightMouseDown(with event: NSEvent) {
-        guard let pet, pet.agent == nil, !pet.character.skills.isEmpty || !pet.availableHobbies.isEmpty else { return }
+        guard let pet, pet.agent == nil, !pet.availableSkills.isEmpty else { return }
         let menu = NSMenu()
         menu.addItem(withTitle: pet.character.displayName(in: Language.current), action: nil, keyEquivalent: "")
-        for skill in pet.character.skills {
+        for skill in pet.availableSkills {
             let item = menu.addItem(withTitle: skill.title, action: #selector(useSkill(_:)), keyEquivalent: "")
             item.target = self
             item.representedObject = skill.rawValue
         }
-        if !pet.availableHobbies.isEmpty {
-            menu.addItem(.separator())
-            for hobby in pet.availableHobbies {
-                let item = menu.addItem(withTitle: hobby.title, action: #selector(useHobby(_:)), keyEquivalent: "")
-                item.target = self
-                item.representedObject = hobby.rawValue
-            }
-        }
         NSMenu.popUpContextMenu(menu, with: event, for: self)
-    }
-
-    @objc private func useHobby(_ sender: NSMenuItem) {
-        guard let raw = sender.representedObject as? String, let hobby = Hobby(rawValue: raw) else { return }
-        pet?.useHobby(hobby)
     }
 
     @objc private func useSkill(_ sender: NSMenuItem) {

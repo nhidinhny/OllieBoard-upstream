@@ -2,8 +2,6 @@ import Foundation
 
 enum Behavior: CaseIterable {
     case wander, kick, arrange, bored, sleep, grumpy, happy, social, skill
-    /// A hobby from the character's story (see Pet.hobbyPlan); only characters with hobbies weigh it.
-    case hobby
 }
 
 /// Special moves from each character's story, used now and then or picked from the right-click menu.
@@ -33,17 +31,12 @@ enum Skill: String {
     case chainJail, scarletEyes     // Kurapika
     case knightOath, shieldBash     // Cat Knight
     case guguChant, bellySlide      // Gugugaga
+    // Skills drawn together with their prop in the character's own skills sheet (see SpriteSheet).
+    case yoyo                       // Killua
+    case balloon, eat               // Luffy
+    case lift, sake                 // Zoro
 
-    var title: String { skillNames[Language.current]?[self] ?? rawValue }
-}
-
-/// Hobbies from a character's story, started now and then or picked from the right-click menu.
-enum Hobby: String {
-    case yoyo               // Killua
-    case balloon, eat       // Luffy
-    case lift, sake         // Zoro
-
-    var title: String { hobbyNames[Language.current]?[self] ?? rawValue }
+    var title: String { (skillNames[Language.current]?[self] ?? drawnSkillNames[Language.current]?[self]) ?? rawValue }
 }
 
 /// Groups the characters in the menu. The five supported series and politics also have a play-room scene.
@@ -83,7 +76,6 @@ struct Character {
     var dialogueID: String? = nil
     var fixedName: String? = nil
     var skills: [Skill] = []
-    var hobbies: [Hobby] = []
 }
 
 extension AgentKind {
@@ -134,12 +126,12 @@ let allCharacters: [Character] = [
         grumpyAnim: .sad, shy: true, prankster: false, skills: [.thunderclap, .clingCry]),
     Character(
         id: "luffy", name: "Monkey D. Luffy", series: .onePiece, walkSpeed: 115,
-        weights: [.wander: 3, .kick: 3.5, .arrange: 0.3, .bored: 1, .sleep: 1.5, .grumpy: 0.5, .happy: 3, .social: 3, .skill: 1.2, .hobby: 3],
-        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.gomuPistol, .gear5], hobbies: [.balloon, .eat]),
+        weights: [.wander: 3, .kick: 3.5, .arrange: 0.3, .bored: 1, .sleep: 1.5, .grumpy: 0.5, .happy: 3, .social: 3, .skill: 4.2],
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.gomuPistol, .gear5, .balloon, .eat]),
     Character(
         id: "zoro", name: "Roronoa Zoro", series: .onePiece, walkSpeed: 90,
-        weights: [.wander: 2.5, .kick: 2, .arrange: 0.5, .bored: 1, .sleep: 4, .grumpy: 1, .happy: 0.5, .social: 0.8, .skill: 1.2, .hobby: 3],
-        grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.threeSword, .getLost], hobbies: [.lift, .sake]),
+        weights: [.wander: 2.5, .kick: 2, .arrange: 0.5, .bored: 1, .sleep: 4, .grumpy: 1, .happy: 0.5, .social: 0.8, .skill: 4.2],
+        grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.threeSword, .getLost, .lift, .sake]),
     Character(
         id: "nami", name: "Nami", series: .onePiece, walkSpeed: 100,
         weights: [.wander: 2.5, .kick: 1.5, .arrange: 2.5, .bored: 1, .sleep: 1, .grumpy: 1.5, .happy: 2, .social: 2, .skill: 1.2],
@@ -174,8 +166,8 @@ let allCharacters: [Character] = [
         grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.jajanken, .fishing]),
     Character(
         id: "killua", name: "Killua Zoldyck", series: .hunterXHunter, walkSpeed: 120,
-        weights: [.wander: 3, .kick: 2.5, .arrange: 0.7, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 1.5, .social: 2, .skill: 1.2, .hobby: 3],
-        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.godspeed, .chocolate], hobbies: [.yoyo]),
+        weights: [.wander: 3, .kick: 2.5, .arrange: 0.7, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 1.5, .social: 2, .skill: 4.2],
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.godspeed, .chocolate, .yoyo]),
     Character(
         id: "kurapika", name: "Kurapika", series: .hunterXHunter, walkSpeed: 95,
         weights: [.wander: 2, .kick: 1, .arrange: 3, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 0.7, .social: 1, .skill: 1.2],
