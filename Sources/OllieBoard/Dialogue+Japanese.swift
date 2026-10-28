@@ -700,6 +700,8 @@ let japaneseLines: [String: Lines] = [
     "killua": Lines(
         shortName: "キルア",
         lines: [
+            .yoyo: ["見てろ、電気ヨーヨーだ!", "充電完了。いくぜ!"],
+            .yoyoDone: ["へっ、決まったな。", "ビリッと命中!"],
             .happy: ["チョコロボくん最高！", "へへっ。"],
             .bored: ["つまんねー。", "チョコロボくん買いに行こうぜ。"],
             .tedious: ["めんどくせー。", "やる気出ねー…"],

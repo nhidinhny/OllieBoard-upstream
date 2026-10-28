@@ -174,8 +174,8 @@ let allCharacters: [Character] = [
         grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.jajanken, .fishing]),
     Character(
         id: "killua", name: "Killua Zoldyck", series: .hunterXHunter, walkSpeed: 120,
-        weights: [.wander: 3, .kick: 2.5, .arrange: 0.7, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 1.5, .social: 2, .skill: 1.2],
-        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.godspeed, .chocolate]),
+        weights: [.wander: 3, .kick: 2.5, .arrange: 0.7, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 1.5, .social: 2, .skill: 1.2, .hobby: 3],
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.godspeed, .chocolate], hobbies: [.yoyo]),
     Character(
         id: "kurapika", name: "Kurapika", series: .hunterXHunter, walkSpeed: 95,
         weights: [.wander: 2, .kick: 1, .arrange: 3, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 0.7, .social: 1, .skill: 1.2],

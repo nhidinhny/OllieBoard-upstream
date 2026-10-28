@@ -1,4 +1,15 @@
 {
+  "killua": {
+    "rows": [
+      {
+        "fps": 8,
+        "frames": 8,
+        "loop": true,
+        "name": "yoyo",
+        "shift": 0
+      }
+    ]
+  },
   "luffy": {
     "rows": [
       {

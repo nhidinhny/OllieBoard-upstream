@@ -700,6 +700,8 @@ let vietnameseLines: [String: Lines] = [
     "killua": Lines(
         shortName: "Killua",
         lines: [
+            .yoyo: ["Nhìn cho kỹ, yoyo điện của tôi đây!", "Sạc đầy rồi. Thử xem nào!"],
+            .yoyoDone: ["Hề, đỉnh thật.", "Xẹt! Trúng phóc."],
             .happy: ["Chocorobot ngon nhất!", "Hehe, vui đấy."],
             .bored: ["Chán ghê... ăn socola thôi.", "Có gì vui không?"],
             .tedious: ["Phiền quá đi.", "Mệt thật, cho tôi kẹo đi."],

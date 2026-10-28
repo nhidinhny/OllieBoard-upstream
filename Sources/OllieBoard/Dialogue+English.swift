@@ -704,6 +704,8 @@ let englishLines: [String: Lines] = [
     "killua": Lines(
         shortName: "Killua",
         lines: [
+            .yoyo: ["Watch this, electric yo-yo!", "Fully charged. Let's see how it goes!"],
+            .yoyoDone: ["Heh, nailed it.", "Zap! Bullseye."],
             .happy: ["Heh.", "Chocolate time!"],
             .bored: ["Boring.", "Got any chocolate?"],
             .tedious: ["Ugh, lame.", "Whatever."],
