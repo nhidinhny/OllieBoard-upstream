@@ -137,8 +137,14 @@ final class Pet {
 
     // MARK: - Tick
 
+    /// The mouse pointer is over the character: it stops walking until the pointer moves away, so it can be
+    /// right-clicked (or just looked at) without running off.
+    private var hovered = false
+
     func tick(_ dt: TimeInterval) {
         if agent != nil, !visible { return }
+        let m = NSEvent.mouseLocation
+        hovered = !dragging && view.bodyRect.contains(CGPoint(x: m.x - window.fullFrame.minX, y: m.y - window.fullFrame.minY))
         if let agent, agent.state == .done || agent.state == .needsInput,
            agentReminders < 2, now - lastAgentCall > 60, isAvailable {
             agentReminders += 1
@@ -182,6 +188,8 @@ final class Pet {
         guard let step = current else { return }
         switch step {
         case .walk(let goal):
+            // Carrying an icon keeps walking (its arms-up pose would not match the icon floating above them).
+            if hovered && carrying == nil { setAnim(.idle); break }
             let target = confined(goal)
             let dx = target.x - position.x, dy = target.y - position.y
             let dist = hypot(dx, dy)
