@@ -1,0 +1,38 @@
+{
+  "luffy": {
+    "rows": [
+      {
+        "fps": 6,
+        "frames": 8,
+        "loop": false,
+        "name": "inflate",
+        "shift": 0
+      },
+      {
+        "fps": 6,
+        "frames": 8,
+        "loop": true,
+        "name": "eat",
+        "shift": 0
+      }
+    ]
+  },
+  "zoro": {
+    "rows": [
+      {
+        "fps": 8,
+        "frames": 8,
+        "loop": true,
+        "name": "lift",
+        "shift": 0
+      },
+      {
+        "fps": 6,
+        "frames": 8,
+        "loop": true,
+        "name": "sake",
+        "shift": 0
+      }
+    ]
+  }
+}

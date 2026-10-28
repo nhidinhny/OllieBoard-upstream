@@ -369,6 +369,9 @@ let japaneseLines: [String: Lines] = [
     "luffy": Lines(
         shortName: "ルフィ",
         lines: [
+            .inflate: ["ゴムゴムの...風船!", "大きく息を吸って...ふーっ!"],
+            .inflateDone: ["ししし!空飛ぶの楽しい!", "空からの眺め、最高だぞ!"],
+            .eat: ["肉ーー！もぐもぐ", "ししし、肉うめぇ！"],
             .happy: ["ししし！", "楽しいな〜！"],
             .bored: ["腹減った…肉〜…", "冒険行こうぜ！"],
             .tedious: ["めんどくせぇ…", "肉食ったら頑張る…"],
@@ -401,6 +404,9 @@ let japaneseLines: [String: Lines] = [
     "zoro": Lines(
         shortName: "ゾロ",
         lines: [
+            .lift: ["軽く体を温めるか。", "もう一セットだ。"],
+            .liftDone: ["だいぶ仕上がってきたな。", "よし。体が温まった。"],
+            .sake: ["鍛錬のあとは一杯だ。", "酒。これだな。"],
             .happy: ["悪くねぇ。", "酒でも飲むか。"],
             .bored: ["…寝る。", "鍛錬でもするか。"],
             .tedious: ["めんどくせぇ。", "ぐぅ…zzz"],

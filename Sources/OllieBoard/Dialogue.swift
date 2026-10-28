@@ -14,6 +14,8 @@ enum Line: CaseIterable {
          climaTact, berries, titanShift, tatakae, odmGear, scarf, spinSlash, cleaning, divergentFist, sukuna,
          infiniteVoid, hollowPurple, divineDogs, rabbitEscape, jajanken, fishing, fishCaught, godspeed, chocolate,
          chainJail, scarletEyes, knightOath, shieldBash, guguChant, bellySlide
+    // Hobbies (see Hobby): Killua's yo-yo, Luffy puffing up and eating, Zoro's weights and sake.
+    case yoyo, yoyoDone, inflate, inflateDone, eat, lift, liftDone, sake
 
     static let agentOnly: Set<Line> = [.agentHello, .agentWorking, .agentDone, .agentNeedsYou, .agentBye]
     /// Special-move lines only some characters have: their own moves, or how they react to someone else's.
@@ -38,6 +40,8 @@ enum Line: CaseIterable {
         .godspeed: ["killua"], .chocolate: ["killua"], .chainJail: ["kurapika"], .scarletEyes: ["kurapika"],
         .knightOath: ["catknight"], .shieldBash: ["catknight"],
         .guguChant: ["gugugaga"], .bellySlide: ["gugugaga"],
+        .yoyo: ["killua"], .yoyoDone: ["killua"], .inflate: ["luffy"], .inflateDone: ["luffy"], .eat: ["luffy"],
+        .lift: ["zoro"], .liftDone: ["zoro"], .sake: ["zoro"],
     ]
 }
 
@@ -72,6 +76,12 @@ let dialogue: [Language: [String: Lines]] = [
     .vi: vietnameseLines,
     .en: englishLines,
     .ja: japaneseLines,
+]
+
+let hobbyNames: [Language: [Hobby: String]] = [
+    .vi: [.yoyo: "Chơi yoyo điện", .balloon: "Phình bụng bay lên", .eat: "Ăn thịt", .lift: "Tập tạ", .sake: "Uống sake"],
+    .en: [.yoyo: "Electric yo-yo", .balloon: "Balloon belly", .eat: "Eat meat", .lift: "Lift weights", .sake: "Sake break"],
+    .ja: [.yoyo: "電気ヨーヨー", .balloon: "お腹風船", .eat: "肉を食べる", .lift: "筋トレ", .sake: "一杯やる"],
 ]
 
 let skillNames: [Language: [Skill: String]] = [
