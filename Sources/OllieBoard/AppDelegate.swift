@@ -23,6 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         for character in allCharacters where enabledIDs.contains(character.id) {
             world.setEnabled(character, true)
         }
+        updateStatusIcon()
 
         if Updater.canUpdate {
             updater.onInstallFailed = { message in
@@ -41,6 +42,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     // Rebuilt every time it opens so warnings reflect Finder's current state.
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+        addItem(menu, world.allHidden ? ui(.showAll) : ui(.hideAll), #selector(toggleAllHidden))
+        menu.addItem(.separator())
         menu.addItem(withTitle: ui(.characters), action: nil, keyEquivalent: "").isEnabled = false
         for group in characterGroups(#selector(toggleCharacter(_:)), isOn: { self.world.pets[$0.id] != nil }) {
             menu.addItem(group)
@@ -186,6 +189,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     private func addItem(_ menu: NSMenu, _ title: String, _ action: Selector, key: String = "") {
         menu.addItem(withTitle: title, action: action, keyEquivalent: key).target = self
+    }
+
+    @objc private func toggleAllHidden() {
+        world.allHidden.toggle()
+        updateStatusIcon()
+    }
+
+    /// The paw is dimmed while everything is hidden.
+    private func updateStatusIcon() {
+        statusItem.button?.appearsDisabled = world.allHidden
     }
 
     @objc private func toggleCharacter(_ sender: NSButton) {

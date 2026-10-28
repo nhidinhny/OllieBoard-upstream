@@ -95,9 +95,23 @@ final class Pet {
         facing = Bool.random() ? 1 : -1
     }
 
+    /// "Hide all" in the menu: the window stays off screen and the pet stands still, keeping its place and state.
+    private(set) var suppressed = false
+
+    func setSuppressed(_ on: Bool) {
+        guard suppressed != on else { return }
+        suppressed = on
+        if on {
+            window.orderOut(nil)
+            edgeMirror?.orderOut(nil)
+        } else if agent == nil || visible {
+            window.orderFrontRegardless()
+        }
+    }
+
     func show() {
         window.place(feetAt: position)
-        window.orderFrontRegardless()
+        if !suppressed { window.orderFrontRegardless() }
         steps = [.play(.happy, 1.4, effect: .heart, say: .happy)]
     }
 
@@ -139,6 +153,7 @@ final class Pet {
 
     func tick(_ dt: TimeInterval) {
         if agent != nil, !visible { return }
+        if suppressed { return }
         if let agent, agent.state == .done || agent.state == .needsInput,
            agentReminders < 2, now - lastAgentCall > 60, isAvailable {
             agentReminders += 1
@@ -474,7 +489,7 @@ final class Pet {
         steps = [.walk(spot), .run { [weak self] in self?.engaged = false }]
         current = nil
         window.place(feetAt: position)
-        window.orderFrontRegardless()
+        if !suppressed { window.orderFrontRegardless() }
     }
 
     private func disappear() {
