@@ -26,7 +26,7 @@ Check `Sources/OllieBoard/SpriteSheet.swift`, `Resources/Sprites/layout.json` un
 
 ## Skill rows, and rows that must be drawn again
 
-For a new animation with a prop (a skill) or a main-sheet row that is soft or lost its feet, draw it from the character's current sprite instead of the model-sheet flow below: read [hobby-rows](references/hobby-rows.md) (`gen_skill_prompts.py` writes the task, `build_skill_rows.py` builds `<id>-skills.png` / replaces rows, `skill_rows.json` holds the options).
+For a new animation with a prop (a skill) or a main-sheet row that is soft or lost its feet, draw it from the character's current sprite instead of the model-sheet flow below: read [skill-rows](references/skill-rows.md) (`gen_skill_prompts.py` writes the task, `build_skill_rows.py` builds `<id>-skills.png` / replaces rows, `skill_rows.json` holds the options).
 
 ## Generate
 
