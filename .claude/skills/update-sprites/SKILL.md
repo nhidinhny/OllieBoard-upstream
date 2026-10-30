@@ -24,6 +24,10 @@ Check `Sources/OllieBoard/SpriteSheet.swift`, `Resources/Sprites/layout.json` un
 - Skill rows must preserve all 8 frames and their action timing from `Pet.swift`. Runtime effects must not be duplicated in the art. Regenerate a wrong action frame instead of resampling it.
 - Preserve unrelated character sheets, `layout.json`, and `effects.png`.
 
+## Skill rows, and rows that must be drawn again
+
+For a new animation with a prop (a skill) or a main-sheet row that is soft or lost its feet, draw it from the character's current sprite instead of the model-sheet flow below: read [skill-rows](references/skill-rows.md) (`gen_skill_prompts.py` writes the task, `build_skill_rows.py` builds `<id>-skills.png` / replaces rows, `skill_rows.json` holds the options).
+
 ## Generate
 
 1. Select an existing id with `python3 scripts/sprites/gen_prompts.py --list`. Read its `CHARACTERS` entry and compare it with the current design and skill plan; the table is a snapshot, not the source of truth.

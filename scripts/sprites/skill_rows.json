@@ -1,0 +1,63 @@
+{
+  "_doc": "Skill rows per character: assets/skills/<id>_<name>.png is a Gemini picture (magenta background) with the drawings in a grid; build_skill_rows.py cuts, keys, scales and fits them into Sources/OllieBoard/Resources/Sprites/<id>-skills.png and skills.json. height: wanted height of the drawings in px (the median drawing); anchor: fraction of a drawing's width, from its left, that goes to the pet's spot; cx: where that point lands in the 256 px cell (default 128, use less when a prop sticks out to the right) together with shift (points, towards the facing direction) so the character still stands on the pet's spot; ground: feet line in px (default 244); grid: [columns, rows] of the picture (default [4, 2]); frames: use only the first N drawings; level: stand every drawing on the ground line; head_norm: keep the head the same width in every drawing (a belly that swells); loop: false stays on the last frame; inset: px cut off every drawing's edges (divider lines). \"redo\": {id: [row options]} lists rows of the MAIN sheet drawn again (assets/redo/<id>_<row>.png, build_skill_rows.py --redo <id>), same options.",
+  "luffy": [
+    {
+      "name": "inflate",
+      "height": 210,
+      "anchor": 0.5,
+      "fps": 6,
+      "loop": false,
+      "head_norm": true
+    },
+    {
+      "name": "eat",
+      "height": 225,
+      "anchor": 0.45,
+      "fps": 6
+    }
+  ],
+  "zoro": [
+    {
+      "name": "lift",
+      "height": 208,
+      "anchor": 0.5,
+      "fps": 8
+    },
+    {
+      "name": "sake",
+      "height": 198,
+      "anchor": 0.38,
+      "fps": 6
+    }
+  ],
+  "killua": [
+    {
+      "name": "yoyo",
+      "height": 222,
+      "anchor": 0.4,
+      "fps": 8,
+      "glow": true
+    }
+  ],
+  "redo": {
+    "killua": [
+      {
+        "name": "carry",
+        "height": 236,
+        "anchor": 0.5,
+        "ground": 243
+      }
+    ]
+  },
+  "maomao": [
+    {
+      "name": "grill",
+      "height": 185,
+      "anchor": 0.3,
+      "fps": 6,
+      "cx": 88,
+      "shift": 20,
+      "level": true
+    }
+  ]
+}
