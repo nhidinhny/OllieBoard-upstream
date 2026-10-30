@@ -12,7 +12,7 @@ The app lives in the menu bar (🐾) only; it has no Dock icon.
   - Attack on Titan: Eren, Mikasa, Levi
   - Jujutsu Kaisen: Yuji, Gojo, Megumi
   - Hunter x Hunter: Gon, Killua, Kurapika
-  - Also Anya Forger (Spy x Family), Frieren (Sousou no Frieren), Hitori Gotoh (Bocchi the Rock!) and Rem (Re:Zero).
+  - Also Anya Forger (Spy x Family), Frieren (Sousou no Frieren), Hitori Gotoh (Bocchi the Rock!), Rem (Re:Zero) and Maomao (Kusuriya no Hitorigoto).
   - Cat Knight: a kitten in armor with a pink bow and a cream cape, who swears on her sword and charges behind a shield bigger than herself.
   - Arknights: Endfield: Gugugaga (Penguinistrator), a chibi Endministrator in a penguin onesie who waddles, chants “gugu gaga!” to cheer friends, and belly-slides across the Desktop. A fan-made meme interpretation.
 

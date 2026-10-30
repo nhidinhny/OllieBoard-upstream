@@ -109,6 +109,7 @@ final class PetView: NSView {
     private var shownFrame: CGImage?
     private var shownFacing: CGFloat = 1
     private var shownScale: CGFloat = 1
+    private var shownShift: CGFloat = 0
     private var shownThought = false
     private var shownEffect: CGImage?
     private var shownRise: CGFloat = -1
@@ -146,10 +147,10 @@ final class PetView: NSView {
     }
 
     /// Applies the pet's current look; does nothing when nothing visible changed.
-    func render(frame: CGImage?, facing: CGFloat, scale: CGFloat, effect: CGImage?, effectAge: TimeInterval,
+    func render(frame: CGImage?, facing: CGFloat, scale: CGFloat, shift: CGFloat, effect: CGImage?, effectAge: TimeInterval,
                 bubble: String?, thought: Bool, tag: String?) {
         let rise = effect == nil ? 0 : (CGFloat(min(effectAge, 0.4) / 0.4) * 8).rounded()
-        guard frame !== shownFrame || facing != shownFacing || scale != shownScale || effect !== shownEffect || rise != shownRise
+        guard frame !== shownFrame || facing != shownFacing || scale != shownScale || shift != shownShift || effect !== shownEffect || rise != shownRise
                 || bubble != shownBubble || thought != shownThought || tag != shownTag else { return }
         CATransaction.begin()
         CATransaction.setDisableActions(true)
@@ -157,6 +158,7 @@ final class PetView: NSView {
         if facing != shownFacing || scale != shownScale {
             spriteLayer.setAffineTransform(CGAffineTransform(scaleX: facing * scale, y: scale))
         }
+        if shift != shownShift { spriteLayer.position = CGPoint(x: PetWindow.feet.x + shift, y: PetWindow.feet.y) }
         if effect !== shownEffect { effectLayer.contents = effect }
         if rise != shownRise { effectLayer.position = CGPoint(x: effectOrigin.x, y: effectOrigin.y + rise) }
         if bubble != shownBubble || thought != shownThought || tag != shownTag {
@@ -169,6 +171,7 @@ final class PetView: NSView {
         shownFrame = frame
         shownFacing = facing
         shownScale = scale
+        shownShift = shift
         shownEffect = effect
         shownRise = rise
     }
@@ -950,10 +953,10 @@ final class PetView: NSView {
 
     /// Right-click lists the character's special moves.
     override func rightMouseDown(with event: NSEvent) {
-        guard let pet, pet.agent == nil, !pet.character.skills.isEmpty else { return }
+        guard let pet, pet.agent == nil, !pet.availableSkills.isEmpty else { return }
         let menu = NSMenu()
         menu.addItem(withTitle: pet.character.displayName(in: Language.current), action: nil, keyEquivalent: "")
-        for skill in pet.character.skills {
+        for skill in pet.availableSkills {
             let item = menu.addItem(withTitle: skill.title, action: #selector(useSkill(_:)), keyEquivalent: "")
             item.target = self
             item.representedObject = skill.rawValue

@@ -370,6 +370,9 @@ let englishLines: [String: Lines] = [
     "luffy": Lines(
         shortName: "Luffy",
         lines: [
+            .inflate: ["Gum-Gum... Balloon!", "Deep breath... pffffff!"],
+            .inflateDone: ["Shishishi! Flying is fun!", "The view from the sky is the best!"],
+            .eat: ["Meat! *munch munch*", "Shishishi, this meat is the best!"],
             .happy: ["Shishishi!", "That's awesome!"],
             .bored: ["I'm hungry...", "Where's the meat?"],
             .tedious: ["Booooring...", "Can we eat now?"],
@@ -402,6 +405,9 @@ let englishLines: [String: Lines] = [
     "zoro": Lines(
         shortName: "Zoro",
         lines: [
+            .lift: ["Warm-up time.", "One more set."],
+            .liftDone: ["Getting better.", "Good. Muscles are warm."],
+            .sake: ["A drink after training.", "Sake. Just right."],
             .happy: ["Heh.", "Not bad."],
             .bored: ["Time for a nap.", "Where's the sake?"],
             .tedious: ["Zzz...", "Wake me when there's a fight."],
@@ -698,6 +704,8 @@ let englishLines: [String: Lines] = [
     "killua": Lines(
         shortName: "Killua",
         lines: [
+            .yoyo: ["Watch this, electric yo-yo!", "Fully charged. Let's see how it goes!"],
+            .yoyoDone: ["Heh, nailed it.", "Zap! Bullseye."],
             .happy: ["Heh.", "Chocolate time!"],
             .bored: ["Boring.", "Got any chocolate?"],
             .tedious: ["Ugh, lame.", "Whatever."],
@@ -758,6 +766,40 @@ let englishLines: [String: Lines] = [
         pairGreet: [
             "gon": ["%@, how have you been?"],
             "killua": ["%@, look after Gon."],
+        ]),
+    // Kusuriya no Hitorigoto.
+    "maomao": Lines(
+        shortName: "Maomao",
+        lines: [
+            .grill: ["Grilled mushrooms smell great. Almost ready.", "The snake skewers are nearly done."],
+            .grillDone: ["Delicious. Worth the wait.", "Cooked just right."],
+            .happy: ["Hm, not bad today.", "New herbs~"],
+            .bored: ["Nothing to study...", "I'd rather be grinding herbs."],
+            .tedious: ["Tedious, but necessary.", "Like sorting dried roots."],
+            .grumpy: ["How troublesome.", "Don't bother me while I think."],
+            .kick: ["This is out of place.", "Sorry, this icon looks suspicious."],
+            .arrange: ["Herbs must be kept neat.", "Right order, right row. Done."],
+            .click: ["Hm? What is it?", "Curious, aren't you."],
+            .poke: ["Stop poking. I'm not a test subject."],
+            .wake: ["...I was only resting my eyes."],
+            .noIcons: ["Spotless. Nothing to study."],
+            .fail: ["Noted: failure. Try again."],
+            .done: ["Done. An interesting result.", "Finished. Into the notebook it goes."],
+            .greet: ["Hello, %@. You look a bit pale.", "%@, sleeping enough lately?"],
+            .greetBack: ["Mm, hello %@."],
+            .wakeOther: ["%@, up. Too much sleep dulls the mind."],
+            .hit: ["%@, don't. That will bruise."],
+            .sorry: ["My mistake. I'll remember it."],
+            .pranked: ["%@, I will remember this."],
+            .chased: ["Run first, think later."],
+            .comfort: ["%@, have some tea. It helps."],
+            .thanks: ["Thanks, %@. Really."],
+            .together: ["%@, want to try a new tea with me?"],
+            .poisonTest: ["Hmm... what an interesting color.", "Just a sniff. A tiny one."],
+            .herbalBrew: ["Ground enough. Medicine's ready!", "The right dose is medicine."],
+        ],
+        pairGreet: [
+            "killua": ["%@, I hear you're immune to poison. Let me try a new one.", "%@, you eat too much sugar."],
         ]),
     // Cat Knight.
     "catknight": Lines(
@@ -863,6 +905,8 @@ let englishSkillNames: [Skill: String] = [
     .melt: "Melt",
     .morningStar: "Morning star",
     .oniForm: "Oni form",
+    .poisonTest: "Poison test",
+    .herbalBrew: "Herbal brew",
     .wall: "The wall",
     .tariff: "Tariffs",
     .judo: "Judo",

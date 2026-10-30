@@ -11,6 +11,7 @@ enum Skill: String {
     case flowerField, mimic         // Frieren
     case guitarSolo, melt           // Bocchi
     case morningStar, oniForm       // Rem
+    case poisonTest, herbalBrew     // Maomao
     case wall, tariff               // Trump
     case judo, bearRide             // Putin
     case parade, aiRobot            // Xi
@@ -31,8 +32,13 @@ enum Skill: String {
     case chainJail, scarletEyes     // Kurapika
     case knightOath, shieldBash     // Cat Knight
     case guguChant, bellySlide      // Gugugaga
+    // Skills drawn together with their prop in the character's own skills sheet (see SpriteSheet).
+    case yoyo                       // Killua
+    case balloon, eat               // Luffy
+    case lift, sake                 // Zoro
+    case grill                      // Maomao
 
-    var title: String { skillNames[Language.current]?[self] ?? rawValue }
+    var title: String { (skillNames[Language.current]?[self] ?? drawnSkillNames[Language.current]?[self]) ?? rawValue }
 }
 
 /// Groups the characters in the menu. The five supported series and politics also have a play-room scene.
@@ -46,6 +52,7 @@ enum Series: String, CaseIterable {
     case frieren = "Sousou no Frieren"
     case bocchi = "Bocchi the Rock!"
     case reZero = "Re:Zero"
+    case apothecary = "Kusuriya no Hitorigoto"
     case catKnight = "Cat Knight"
     case endfield = "Arknights: Endfield"
     case politics = "Chính trị"
@@ -105,6 +112,10 @@ let allCharacters: [Character] = [
         id: "rem", name: "Rem", series: .reZero, walkSpeed: 105,
         weights: [.wander: 2, .kick: 1, .arrange: 4, .bored: 1, .sleep: 0.5, .grumpy: 1, .happy: 1.5, .social: 1.5, .skill: 1],
         grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.morningStar, .oniForm]),
+    Character(
+        id: "maomao", name: "Maomao", series: .apothecary, walkSpeed: 88,
+        weights: [.wander: 2.6, .kick: 0.3, .arrange: 3.5, .bored: 1, .sleep: 0.8, .grumpy: 1.1, .happy: 0.7, .social: 0.8, .skill: 4.6],
+        grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.poisonTest, .herbalBrew, .grill]),
 
     // Three characters per supported series for now.
     // TODO: Kimetsu no Yaiba — Hashibira Inosuke, Kibutsuji Muzan.
@@ -122,12 +133,12 @@ let allCharacters: [Character] = [
         grumpyAnim: .sad, shy: true, prankster: false, skills: [.thunderclap, .clingCry]),
     Character(
         id: "luffy", name: "Monkey D. Luffy", series: .onePiece, walkSpeed: 115,
-        weights: [.wander: 3, .kick: 3.5, .arrange: 0.3, .bored: 1, .sleep: 1.5, .grumpy: 0.5, .happy: 3, .social: 3, .skill: 1.2],
-        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.gomuPistol, .gear5]),
+        weights: [.wander: 3, .kick: 3.5, .arrange: 0.3, .bored: 1, .sleep: 1.5, .grumpy: 0.5, .happy: 3, .social: 3, .skill: 4.2],
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.gomuPistol, .gear5, .balloon, .eat]),
     Character(
         id: "zoro", name: "Roronoa Zoro", series: .onePiece, walkSpeed: 90,
-        weights: [.wander: 2.5, .kick: 2, .arrange: 0.5, .bored: 1, .sleep: 4, .grumpy: 1, .happy: 0.5, .social: 0.8, .skill: 1.2],
-        grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.threeSword, .getLost]),
+        weights: [.wander: 2.5, .kick: 2, .arrange: 0.5, .bored: 1, .sleep: 4, .grumpy: 1, .happy: 0.5, .social: 0.8, .skill: 4.2],
+        grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.threeSword, .getLost, .lift, .sake]),
     Character(
         id: "nami", name: "Nami", series: .onePiece, walkSpeed: 100,
         weights: [.wander: 2.5, .kick: 1.5, .arrange: 2.5, .bored: 1, .sleep: 1, .grumpy: 1.5, .happy: 2, .social: 2, .skill: 1.2],
@@ -162,8 +173,8 @@ let allCharacters: [Character] = [
         grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.jajanken, .fishing]),
     Character(
         id: "killua", name: "Killua Zoldyck", series: .hunterXHunter, walkSpeed: 120,
-        weights: [.wander: 3, .kick: 2.5, .arrange: 0.7, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 1.5, .social: 2, .skill: 1.2],
-        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.godspeed, .chocolate]),
+        weights: [.wander: 3, .kick: 2.5, .arrange: 0.7, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 1.5, .social: 2, .skill: 4.2],
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.godspeed, .chocolate, .yoyo]),
     Character(
         id: "kurapika", name: "Kurapika", series: .hunterXHunter, walkSpeed: 95,
         weights: [.wander: 2, .kick: 1, .arrange: 3, .bored: 1.5, .sleep: 1, .grumpy: 1, .happy: 0.7, .social: 1, .skill: 1.2],

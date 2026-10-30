@@ -369,6 +369,9 @@ let vietnameseLines: [String: Lines] = [
     "luffy": Lines(
         shortName: "Luffy",
         lines: [
+            .inflate: ["Gomu Gomu no... Bóng bay!", "Hít thật sâu... phùùù!"],
+            .inflateDone: ["Shishishi! Bay vui ghê!", "Trên trời nhìn thích thật!"],
+            .eat: ["Thịt! *nhai nhai*", "Shishishi, thịt ngon nhất!"],
             .happy: ["Shishishi!", "Mình sẽ trở thành Vua Hải Tặc!"],
             .bored: ["Chán quá! Đi phiêu lưu thôi!", "Đói bụng... thịt đâu?"],
             .tedious: ["Đói quá... không đi nổi...", "Sanji, cho xin miếng thịt!"],
@@ -401,6 +404,9 @@ let vietnameseLines: [String: Lines] = [
     "zoro": Lines(
         shortName: "Zoro",
         lines: [
+            .lift: ["Khởi động chút.", "Thêm một hiệp nữa."],
+            .liftDone: ["Khá hơn rồi đấy.", "Được. Người nóng lên rồi."],
+            .sake: ["Tập xong thì làm một ly.", "Sake. Chuẩn rồi."],
             .happy: ["Hừ. Không tệ.", "Có rượu thì tốt hơn."],
             .bored: ["Ngủ một giấc vậy.", "Không có ai đáng để chém à?"],
             .tedious: ["Phiền phức.", "Zzz..."],
@@ -694,6 +700,8 @@ let vietnameseLines: [String: Lines] = [
     "killua": Lines(
         shortName: "Killua",
         lines: [
+            .yoyo: ["Nhìn cho kỹ, yoyo điện của tôi đây!", "Sạc đầy rồi. Thử xem nào!"],
+            .yoyoDone: ["Hề, đỉnh thật.", "Xẹt! Trúng phóc."],
             .happy: ["Chocorobot ngon nhất!", "Hehe, vui đấy."],
             .bored: ["Chán ghê... ăn socola thôi.", "Có gì vui không?"],
             .tedious: ["Phiền quá đi.", "Mệt thật, cho tôi kẹo đi."],
@@ -754,6 +762,40 @@ let vietnameseLines: [String: Lines] = [
         pairGreet: [
             "gon": ["%@, cậu vẫn khỏe chứ?"],
             "killua": ["%@, đừng ăn nhiều kẹo quá."],
+        ]),
+    // Kusuriya no Hitorigoto.
+    "maomao": Lines(
+        shortName: "Maomao",
+        lines: [
+            .grill: ["Nấm nướng thơm quá, chờ chút là ăn được.", "Xiên rắn sắp chín rồi."],
+            .grillDone: ["Ngon tuyệt, đúng là đáng chờ.", "Chín vừa tới, ngon lắm."],
+            .happy: ["Hm, hôm nay khá ổn.", "Có thảo dược mới rồi~"],
+            .bored: ["Chẳng có gì để nghiên cứu...", "Thà đi nghiền thuốc còn hơn."],
+            .tedious: ["Tẻ nhạt, nhưng cần làm.", "Như phân loại rễ khô vậy."],
+            .grumpy: ["Phiền phức.", "Đừng làm phiền lúc tôi đang suy nghĩ."],
+            .kick: ["Cái này không nằm đúng chỗ.", "Xin lỗi, icon này đáng ngờ."],
+            .arrange: ["Dược liệu phải xếp cho gọn.", "Đúng thứ tự, đúng hàng. Xong."],
+            .click: ["Hửm? Có chuyện gì?", "Tò mò quá nhỉ."],
+            .poke: ["Đừng chọc. Tôi không phải chuột thí nghiệm."],
+            .wake: ["...Tôi chỉ nhắm mắt nghỉ thôi."],
+            .noIcons: ["Sạch trơn. Không có gì để nghiên cứu."],
+            .fail: ["Ghi chép lại: thất bại. Thử lại."],
+            .done: ["Xong. Kết quả khá thú vị.", "Hoàn tất. Ghi vào sổ."],
+            .greet: ["Chào %@. Bạn trông hơi xanh xao đấy.", "%@, dạo này ngủ đủ chứ?"],
+            .greetBack: ["Ừ, chào %@."],
+            .wakeOther: ["%@, dậy đi. Ngủ nhiều đầu óc mụ mị đấy."],
+            .hit: ["%@, đừng làm vậy. Sẽ có vết bầm đấy."],
+            .sorry: ["Lỗi của tôi. Tôi sẽ ghi nhớ."],
+            .pranked: ["%@, tôi sẽ nhớ chuyện này."],
+            .chased: ["Chạy trước rồi tính sau."],
+            .comfort: ["%@, uống chút trà đi. Sẽ đỡ hơn."],
+            .thanks: ["Cảm ơn %@. Thật đấy."],
+            .together: ["%@, thử loại trà mới với tôi không?"],
+            .poisonTest: ["Hmm... màu này thú vị đấy.", "Chỉ ngửi thử thôi. Chỉ một chút."],
+            .herbalBrew: ["Nghiền đủ rồi. Thuốc xong!", "Đúng liều lượng thì là thuốc."],
+        ],
+        pairGreet: [
+            "killua": ["%@, nghe nói cậu miễn nhiễm độc. Cho tôi thử loại mới nhé.", "%@, cậu ăn đường nhiều quá."],
         ]),
     // Cat Knight.
     "catknight": Lines(
@@ -859,6 +901,8 @@ let vietnameseSkillNames: [Skill: String] = [
     .melt: "Tan chảy",
     .morningStar: "Chùy gai",
     .oniForm: "Quỷ hóa",
+    .poisonTest: "Thử độc",
+    .herbalBrew: "Bào chế thuốc",
     .wall: "Bức tường",
     .tariff: "Thuế quan",
     .judo: "Judo",

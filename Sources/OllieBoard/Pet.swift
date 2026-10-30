@@ -7,6 +7,8 @@ final class Pet {
         case walk(CGPoint)
         /// Drops straight down to this height (a pet let go above the room's floor).
         case fall(CGFloat)
+        /// Floats straight up to this height (Luffy blown up like a balloon).
+        case rise(CGFloat)
         case play(Anim, TimeInterval, effect: Effect? = nil, say: Line? = nil)
         /// Plays an animation once from its start and stays on its last frame (Bocchi's puddle);
         /// if it is already playing, it carries on from where it is instead of restarting.
@@ -95,9 +97,23 @@ final class Pet {
         facing = Bool.random() ? 1 : -1
     }
 
+    /// "Hide all" in the menu: the window stays off screen and the pet stands still, keeping its place and state.
+    private(set) var suppressed = false
+
+    func setSuppressed(_ on: Bool) {
+        guard suppressed != on else { return }
+        suppressed = on
+        if on {
+            window.orderOut(nil)
+            edgeMirror?.orderOut(nil)
+        } else if agent == nil || visible {
+            window.orderFrontRegardless()
+        }
+    }
+
     func show() {
         window.place(feetAt: position)
-        window.orderFrontRegardless()
+        if !suppressed { window.orderFrontRegardless() }
         steps = [.play(.happy, 1.4, effect: .heart, say: .happy)]
     }
 
@@ -137,8 +153,15 @@ final class Pet {
 
     // MARK: - Tick
 
+    /// The mouse pointer is over the character: it stops walking until the pointer moves away, so it can be
+    /// right-clicked (or just looked at) without running off.
+    private var hovered = false
+
     func tick(_ dt: TimeInterval) {
         if agent != nil, !visible { return }
+        if suppressed { return }
+        let m = NSEvent.mouseLocation
+        hovered = !dragging && view.bodyRect.contains(CGPoint(x: m.x - window.fullFrame.minX, y: m.y - window.fullFrame.minY))
         if let agent, agent.state == .done || agent.state == .needsInput,
            agentReminders < 2, now - lastAgentCall > 60, isAvailable {
             agentReminders += 1
@@ -164,14 +187,14 @@ final class Pet {
         updateMousePassthrough()
         let fx = currentEffect()
         let bubble = currentBubble()
-        view.render(frame: currentFrame(), facing: facing, scale: scale, effect: fx.flatMap { SpriteSheet.effect($0.0) },
+        view.render(frame: currentFrame(), facing: facing, scale: scale, shift: sheet.shift(anim) * facing, effect: fx.flatMap { SpriteSheet.effect($0.0) },
                     effectAge: fx?.1 ?? 0, bubble: bubble?.text, thought: bubble?.thought ?? false, tag: tag)
         mirrorOverhang()
     }
 
     /// Draws the part of the pet that lies on a second screen (see PetWindow).
     private func mirrorOverhang() {
-        guard let screen = window.overhangScreen else { edgeMirror?.orderOut(nil); return }
+        guard !flying, let screen = window.overhangScreen else { edgeMirror?.orderOut(nil); return }
         let mirror = edgeMirror ?? PetEdgeMirror()
         edgeMirror = mirror
         mirror.show(copying: view, windowFrame: window.fullFrame, on: screen, level: window.level)
@@ -182,6 +205,8 @@ final class Pet {
         guard let step = current else { return }
         switch step {
         case .walk(let goal):
+            // Carrying an icon keeps walking (its arms-up pose would not match the icon floating above them).
+            if hovered && carrying == nil { setAnim(.idle); break }
             let target = confined(goal)
             let dx = target.x - position.x, dy = target.y - position.y
             let dist = hypot(dx, dy)
@@ -199,9 +224,13 @@ final class Pet {
             }
             if let name = carrying { world.desktop.moveLive(name, to: carryPoint) }
         case .fall(let y):
-            setAnim(.dragged)
+            if flying { showInflated() } else { setAnim(.dragged) }   // Luffy keeps his balloon belly on the way down
             position.y = max(y, position.y - CGFloat(700 * dt))
             if position.y <= y { current = nil }
+        case .rise(let y):
+            if flying { showInflated() } else { setAnim(.happy) }
+            position.y = min(y, position.y + CGFloat(380 * dt))
+            if position.y >= y { current = nil }
         case .play(_, let duration, _, _), .hold(_, let duration):
             if now - stepStart >= duration { current = nil }
         case .face, .run, .line:
@@ -237,7 +266,7 @@ final class Pet {
         case .hold(let a, _):
             setAnim(a)
             holding = true
-        case .walk, .fall:
+        case .walk, .fall, .rise:
             break
         }
     }
@@ -246,7 +275,7 @@ final class Pet {
     private func interrupt(_ newSteps: [Step]) {
         if let current {
             switch current {
-            case .walk, .fall: steps.insert(current, at: 0)
+            case .walk, .fall, .rise: steps.insert(current, at: 0)
             default: break
             }
         }
@@ -303,9 +332,67 @@ final class Pet {
         case .social:
             return socialPlan()
         case .skill:
-            guard let skill = character.skills.randomElement() else { return plan(for: .wander) }
+            guard let skill = availableSkills.randomElement() else { return plan(for: .wander) }
             return skillPlan(skill)
         }
+    }
+
+    // MARK: - Skills drawn with their prop
+
+    /// Luffy is floating up or down as a balloon: only the screen-edge mirror cares (it would copy the sprite every frame).
+    private var flying = false
+
+    /// Luffy's last, fully puffed-up `inflate` frame (also after something interrupted him in the air).
+    private func showInflated() {
+        guard sheet.has(.inflate) else { return setAnim(.happy) }
+        if anim != .inflate {
+            anim = .inflate
+            animStart = now - sheet.duration(.inflate)
+        }
+    }
+
+    /// The skills this character's sheets actually draw (one without its rows in the skills sheet is not offered).
+    var availableSkills: [Skill] { character.skills.filter { sheet.hasSkill($0) } }
+
+    /// A skill whose prop is drawn in the character's own skills sheet (`<id>-skills.png`, see skills.json).
+    private func drawnSkillPlan(_ skill: Skill) -> [Step] {
+        let f = facing
+        switch skill {
+        case .yoyo:
+            return engage([.face(f), .line(.yoyo, to: nil), .play(.yoyo, 5.5),
+                           .play(.happy, 1.2, effect: .sparkle, say: .yoyoDone)])
+        case .balloon:
+            return balloonPlan()
+        case .eat:
+            return engage([.face(f), .play(.eat, 6, say: .eat), .play(.happy, 1.2, effect: .heart)])
+        case .lift:
+            return engage([.face(f), .line(.lift, to: nil), .play(.lift, 6),
+                           .play(.happy, 1.2, effect: .sparkle, say: .liftDone)])
+        case .sake:
+            return engage([.face(f), .play(.sake, 1.4, say: .sake), .play(.sake, 5.4),
+                           .play(.happy, 1.4, effect: .note)])
+        case .grill:
+            // The campfire and the skewers are drawn in her own skills row.
+            return engage([.face(f), .line(.grill, to: nil), .play(.grill, 6),
+                           .play(.happy, 1.6, effect: .heart, say: .grillDone)])
+        default:
+            return plan(for: .wander)
+        }
+    }
+
+    /// Luffy puffs his belly out like a balloon, floats up to twice his own height above the ground and comes back down.
+    private func balloonPlan() -> [Step] {
+        let frame = screenFrame(containing: position)
+        let ground = position.y
+        let ceiling = min(ground + 2 * SpriteSheet.layout.frameSize, frame.maxY - 20)
+        // His belly swells in his own `inflate` row (it plays once and stays on its last, floating frame).
+        return engage([.play(.inflate, 1.4, effect: .sparkle, say: .inflate),
+                       .run { [weak self] in self?.flying = true },
+                       .rise(ceiling),
+                       .play(.inflate, 1.6),
+                       .fall(ground),
+                       .run { [weak self] in self?.view.puff(); self?.flying = false },
+                       .play(.happy, 1.6, effect: .heart, say: .inflateDone)])
     }
 
     /// Wraps a multi-step task so other pets leave this one alone until it finishes.
@@ -474,7 +561,7 @@ final class Pet {
         steps = [.walk(spot), .run { [weak self] in self?.engaged = false }]
         current = nil
         window.place(feetAt: position)
-        window.orderFrontRegardless()
+        if !suppressed { window.orderFrontRegardless() }
     }
 
     private func disappear() {
@@ -666,12 +753,14 @@ final class Pet {
 
     /// A special move picked from the right-click menu.
     func useSkill(_ skill: Skill) {
-        guard agent == nil, !dragging, !leaving else { return }
+        guard agent == nil, !dragging, !leaving, availableSkills.contains(skill) else { return }
         interrupt(skillPlan(skill))
     }
 
     private func skillPlan(_ skill: Skill) -> [Step] {
         switch skill {
+        case .yoyo, .balloon, .eat, .lift, .sake, .grill:
+            return drawnSkillPlan(skill)
         case .mindRead:
             // Whatever app you are in is what's on your mind.
             let app = NSWorkspace.shared.frontmostApplication.flatMap { $0 == NSRunningApplication.current ? nil : $0.localizedName }
@@ -760,6 +849,18 @@ final class Pet {
                            },
                            .play(.skill1, 0.375),
                            .play(.happy, 1, effect: .sparkle)])
+        case .poisonTest:
+            // Shakes the vial and watches the purple bubbles; only a visual, nothing on the Desktop changes.
+            return [.play(.skill1, 0.4, say: .poisonTest),
+                    .run { [weak self] in self?.view.aura(for: 2.4, color: Pet.purple) },
+                    .play(.skill1, 2.2),
+                    .play(.idle, 0.8, effect: .dots)]
+        case .herbalBrew:
+            // Grinds herbs in the mortar, then a soft recovery glow. Also only a visual.
+            return [.play(.skill2, 0.4, say: .herbalBrew),
+                    .run { [weak self] in self?.view.sparks(color: CGColor(srgbRed: 0.5, green: 0.9, blue: 0.55, alpha: 1), for: 2.4) },
+                    .play(.skill2, 2.2),
+                    .play(.happy, 1.2, effect: .sparkle)]
         case .oniForm:
             return engage([.play(.surprised, 0.4, effect: .exclaim),
                            .run { [weak self] in self?.view.aura(for: 4) },
