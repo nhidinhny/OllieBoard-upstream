@@ -28,6 +28,17 @@
       }
     ]
   },
+  "maomao": {
+    "rows": [
+      {
+        "fps": 6,
+        "frames": 8,
+        "loop": true,
+        "name": "grill",
+        "shift": 20
+      }
+    ]
+  },
   "zoro": {
     "rows": [
       {

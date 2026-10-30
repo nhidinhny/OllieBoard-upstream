@@ -48,5 +48,16 @@
         "ground": 243
       }
     ]
-  }
+  },
+  "maomao": [
+    {
+      "name": "grill",
+      "height": 185,
+      "anchor": 0.3,
+      "fps": 6,
+      "cx": 88,
+      "shift": 20,
+      "level": true
+    }
+  ]
 }
