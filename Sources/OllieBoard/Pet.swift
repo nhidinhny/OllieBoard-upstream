@@ -371,6 +371,10 @@ final class Pet {
         case .sake:
             return engage([.face(f), .play(.sake, 1.4, say: .sake), .play(.sake, 5.4),
                            .play(.happy, 1.4, effect: .note)])
+        case .grill:
+            // The campfire and the skewers are drawn in her own skills row.
+            return engage([.face(f), .line(.grill, to: nil), .play(.grill, 6),
+                           .play(.happy, 1.6, effect: .heart, say: .grillDone)])
         default:
             return plan(for: .wander)
         }
@@ -755,7 +759,7 @@ final class Pet {
 
     private func skillPlan(_ skill: Skill) -> [Step] {
         switch skill {
-        case .yoyo, .balloon, .eat, .lift, .sake:
+        case .yoyo, .balloon, .eat, .lift, .sake, .grill:
             return drawnSkillPlan(skill)
         case .mindRead:
             // Whatever app you are in is what's on your mind.
@@ -845,6 +849,18 @@ final class Pet {
                            },
                            .play(.skill1, 0.375),
                            .play(.happy, 1, effect: .sparkle)])
+        case .poisonTest:
+            // Shakes the vial and watches the purple bubbles; only a visual, nothing on the Desktop changes.
+            return [.play(.skill1, 0.4, say: .poisonTest),
+                    .run { [weak self] in self?.view.aura(for: 2.4, color: Pet.purple) },
+                    .play(.skill1, 2.2),
+                    .play(.idle, 0.8, effect: .dots)]
+        case .herbalBrew:
+            // Grinds herbs in the mortar, then a soft recovery glow. Also only a visual.
+            return [.play(.skill2, 0.4, say: .herbalBrew),
+                    .run { [weak self] in self?.view.sparks(color: CGColor(srgbRed: 0.5, green: 0.9, blue: 0.55, alpha: 1), for: 2.4) },
+                    .play(.skill2, 2.2),
+                    .play(.happy, 1.2, effect: .sparkle)]
         case .oniForm:
             return engage([.play(.surprised, 0.4, effect: .exclaim),
                            .run { [weak self] in self?.view.aura(for: 4) },

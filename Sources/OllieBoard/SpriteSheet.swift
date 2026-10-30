@@ -7,7 +7,7 @@ enum Anim: String, CaseIterable {
 
     /// Skills drawn together with their prop (see Pet.drawnSkillPlan): each is a row in the character's own
     /// `<id>-skills.png`, which only has the rows of that character's skills (skills.json lists them).
-    case yoyo, inflate, eat, lift, sake
+    case yoyo, inflate, eat, lift, sake, grill
 
     var isSkill: Bool { self == .skill1 || self == .skill2 }
 }
@@ -114,6 +114,7 @@ final class SpriteSheet {
         case .eat: return has(.eat)
         case .lift: return has(.lift)
         case .sake: return has(.sake)
+        case .grill: return has(.grill)
         default: return true
         }
     }

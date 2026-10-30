@@ -11,6 +11,7 @@ enum Skill: String {
     case flowerField, mimic         // Frieren
     case guitarSolo, melt           // Bocchi
     case morningStar, oniForm       // Rem
+    case poisonTest, herbalBrew     // Maomao
     case wall, tariff               // Trump
     case judo, bearRide             // Putin
     case parade, aiRobot            // Xi
@@ -35,6 +36,7 @@ enum Skill: String {
     case yoyo                       // Killua
     case balloon, eat               // Luffy
     case lift, sake                 // Zoro
+    case grill                      // Maomao
 
     var title: String { (skillNames[Language.current]?[self] ?? drawnSkillNames[Language.current]?[self]) ?? rawValue }
 }
@@ -50,6 +52,7 @@ enum Series: String, CaseIterable {
     case frieren = "Sousou no Frieren"
     case bocchi = "Bocchi the Rock!"
     case reZero = "Re:Zero"
+    case apothecary = "Kusuriya no Hitorigoto"
     case catKnight = "Cat Knight"
     case endfield = "Arknights: Endfield"
     case politics = "Chính trị"
@@ -109,6 +112,10 @@ let allCharacters: [Character] = [
         id: "rem", name: "Rem", series: .reZero, walkSpeed: 105,
         weights: [.wander: 2, .kick: 1, .arrange: 4, .bored: 1, .sleep: 0.5, .grumpy: 1, .happy: 1.5, .social: 1.5, .skill: 1],
         grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.morningStar, .oniForm]),
+    Character(
+        id: "maomao", name: "Maomao", series: .apothecary, walkSpeed: 88,
+        weights: [.wander: 2.6, .kick: 0.3, .arrange: 3.5, .bored: 1, .sleep: 0.8, .grumpy: 1.1, .happy: 0.7, .social: 0.8, .skill: 4.6],
+        grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.poisonTest, .herbalBrew, .grill]),
 
     // Three characters per supported series for now.
     // TODO: Kimetsu no Yaiba — Hashibira Inosuke, Kibutsuji Muzan.
