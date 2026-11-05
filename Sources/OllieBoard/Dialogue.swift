@@ -14,9 +14,12 @@ enum Line: CaseIterable {
          climaTact, berries, titanShift, tatakae, odmGear, scarf, spinSlash, cleaning, divergentFist, sukuna,
          infiniteVoid, hollowPurple, divineDogs, rabbitEscape, jajanken, fishing, fishCaught, godspeed, chocolate,
          chainJail, scarletEyes, knightOath, shieldBash, guguChant, bellySlide, poisonTest, herbalBrew
+    // Shisui's moves and Maomao running over when she digs up a cordyceps; Shisui turning into consort Loulan and
+    // back, Loulan's moves, and Maomao keeping her guard up around her.
+    case bugNet, cordyceps, cordycepsWant, transform, gokigenyou, sleeveSmile, transformBack, waryLoulan
     // Skills drawn with their prop (see Skill): Killua's yo-yo, Luffy puffing up and eating, Zoro's weights and sake,
-    // Maomao's grill.
-    case yoyo, yoyoDone, inflate, inflateDone, eat, lift, liftDone, sake, grill, grillDone
+    // Maomao's grill, Shisui watching a beetle.
+    case yoyo, yoyoDone, inflate, inflateDone, eat, lift, liftDone, sake, grill, grillDone, bugWatch
 
     static let agentOnly: Set<Line> = [.agentHello, .agentWorking, .agentDone, .agentNeedsYou, .agentBye]
     /// Special-move lines only some characters have: their own moves, or how they react to someone else's.
@@ -42,6 +45,8 @@ enum Line: CaseIterable {
         .knightOath: ["catknight"], .shieldBash: ["catknight"],
         .guguChant: ["gugugaga"], .bellySlide: ["gugugaga"],
         .poisonTest: ["maomao"], .herbalBrew: ["maomao"],
+        .bugNet: ["shisui"], .cordyceps: ["shisui"], .bugWatch: ["shisui"], .transform: ["shisui"], .cordycepsWant: ["maomao"],
+        .gokigenyou: ["loulan"], .sleeveSmile: ["loulan"], .transformBack: ["loulan"], .waryLoulan: ["maomao"],
         .yoyo: ["killua"], .yoyoDone: ["killua"], .inflate: ["luffy"], .inflateDone: ["luffy"], .eat: ["luffy"],
         .lift: ["zoro"], .liftDone: ["zoro"], .sake: ["zoro"], .grill: ["maomao"], .grillDone: ["maomao"],
     ]
@@ -72,6 +77,8 @@ struct Lines {
     let lines: [Line: [String]]
     /// Special greetings for a specific friend, keyed by their id.
     var pairGreet: [String: [String]] = [:]
+    /// Short three-line exchanges with a specific friend (this one, the friend, this one again), keyed by their id.
+    var pairTalks: [String: [[String]]] = [:]
 }
 
 let dialogue: [Language: [String: Lines]] = [
@@ -82,9 +89,9 @@ let dialogue: [Language: [String: Lines]] = [
 
 /// Names of the skills drawn in the skills sheet (the others are in the per-language skill name tables).
 let drawnSkillNames: [Language: [Skill: String]] = [
-    .vi: [.yoyo: "Chơi yoyo điện", .balloon: "Phình bụng bay lên", .eat: "Ăn thịt", .lift: "Tập tạ", .sake: "Uống sake", .grill: "Nướng nấm"],
-    .en: [.yoyo: "Electric yo-yo", .balloon: "Balloon belly", .eat: "Eat meat", .lift: "Lift weights", .sake: "Sake break", .grill: "Grill mushrooms"],
-    .ja: [.yoyo: "電気ヨーヨー", .balloon: "お腹風船", .eat: "肉を食べる", .lift: "筋トレ", .sake: "一杯やる", .grill: "キノコ焼き"],
+    .vi: [.yoyo: "Chơi yoyo điện", .balloon: "Phình bụng bay lên", .eat: "Ăn thịt", .lift: "Tập tạ", .sake: "Uống sake", .grill: "Nướng nấm", .bugWatch: "Ngắm côn trùng"],
+    .en: [.yoyo: "Electric yo-yo", .balloon: "Balloon belly", .eat: "Eat meat", .lift: "Lift weights", .sake: "Sake break", .grill: "Grill mushrooms", .bugWatch: "Bug watching"],
+    .ja: [.yoyo: "電気ヨーヨー", .balloon: "お腹風船", .eat: "肉を食べる", .lift: "筋トレ", .sake: "一杯やる", .grill: "キノコ焼き", .bugWatch: "虫観察"],
 ]
 
 let skillNames: [Language: [Skill: String]] = [
@@ -94,6 +101,11 @@ let skillNames: [Language: [Skill: String]] = [
 ]
 
 extension Character {
+    /// A random three-line exchange this character starts with `partner`, in the current language.
+    func pairTalk(with partner: Character) -> [String]? {
+        dialogue[Language.current]?[dialogueID ?? id]?.pairTalks[partner.id]?.randomElement()
+    }
+
     func displayName(in language: Language) -> String {
         fixedName ?? dialogue[language]?[id]?.shortName ?? name
     }

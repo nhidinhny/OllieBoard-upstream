@@ -12,6 +12,9 @@ enum Skill: String {
     case guitarSolo, melt           // Bocchi
     case morningStar, oniForm       // Rem
     case poisonTest, herbalBrew     // Maomao
+    case bugNet, cordyceps          // Shisui
+    case transform                  // Shisui dresses up as consort Loulan (see loulanLook)
+    case gokigenyou, sleeveSmile, transformBack // Loulan (the last one turns her back into Shisui)
     case wall, tariff               // Trump
     case judo, bearRide             // Putin
     case parade, aiRobot            // Xi
@@ -37,6 +40,7 @@ enum Skill: String {
     case balloon, eat               // Luffy
     case lift, sake                 // Zoro
     case grill                      // Maomao
+    case bugWatch                   // Shisui
 
     var title: String { (skillNames[Language.current]?[self] ?? drawnSkillNames[Language.current]?[self]) ?? rawValue }
 }
@@ -91,6 +95,13 @@ extension AgentKind {
     }
 }
 
+/// Shisui in her true role, consort Loulan of the Shi clan: poised and distant, no kicking or tidying. Not in the menu;
+/// Shisui's pet switches to this look (its own sheet, loulan.png, and its own lines) with the transform skill.
+let loulanLook = Character(
+    id: "loulan", name: "Loulan", series: .apothecary, walkSpeed: 70,
+    weights: [.wander: 2.5, .kick: 0, .arrange: 0, .bored: 0.6, .sleep: 0.5, .grumpy: 0.4, .happy: 1, .social: 2.2, .skill: 3],
+    grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.gokigenyou, .sleeveSmile, .transformBack])
+
 let allCharacters: [Character] = [
     Character(
         id: "anya", name: "Anya Forger", series: .spyFamily, walkSpeed: 95,
@@ -116,6 +127,11 @@ let allCharacters: [Character] = [
         id: "maomao", name: "Maomao", series: .apothecary, walkSpeed: 88,
         weights: [.wander: 2.6, .kick: 0.3, .arrange: 3.5, .bored: 1, .sleep: 0.8, .grumpy: 1.1, .happy: 0.7, .social: 0.8, .skill: 4.6],
         grumpyAnim: .grumpy, shy: false, prankster: false, skills: [.poisonTest, .herbalBrew, .grill]),
+    // A cheerful palace maid who loves insects (really Loulan of the Shi clan) and Maomao's friend.
+    Character(
+        id: "shisui", name: "Shisui", series: .apothecary, walkSpeed: 105,
+        weights: [.wander: 3, .kick: 0.8, .arrange: 0.8, .bored: 0.6, .sleep: 0.6, .grumpy: 0.4, .happy: 2, .social: 2.6, .skill: 4.5],
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.bugNet, .cordyceps, .bugWatch, .transform]),
 
     // Three characters per supported series for now.
     // TODO: Kimetsu no Yaiba — Hashibira Inosuke, Kibutsuji Muzan.

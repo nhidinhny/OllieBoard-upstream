@@ -27,13 +27,17 @@ final class Pet {
         case tossed(Pet), applaud(Pet)
         /// Special move: caught in Gojo's Infinite Void, frozen in place.
         case stunned(Pet)
+        /// The friend's answer in a pair exchange.
+        case talk(Pet, String)
     }
 
     /// How high above the feet a carried icon is held.
     private static let carryLift: CGFloat = 132
 
-    let character: Character
-    private let sheet: SpriteSheet
+    /// Changes when Shisui dresses up as Loulan (see setLook); `baseCharacter` is the one picked in the menu.
+    private(set) var character: Character
+    let baseCharacter: Character
+    private var sheet: SpriteSheet
     private unowned let world: World
     private let view: PetView
     private lazy var window = PetWindow(view: view)
@@ -88,6 +92,7 @@ final class Pet {
 
     init(character: Character, world: World, position: CGPoint, agent: AgentSession? = nil) {
         self.character = character
+        self.baseCharacter = character
         self.sheet = agent.map { SpriteSheet.named($0.kind.rawValue, skills: false) } ?? SpriteSheet.named(character.id)
         self.view = PetView()
         self.world = world
@@ -143,6 +148,14 @@ final class Pet {
 
     private func setAnim(_ a: Anim) {
         if a != anim { anim = a; animStart = now }
+    }
+
+    /// Says a line written out in full (one side of a pair exchange).
+    private func speak(_ text: String) -> Step {
+        .run { [weak self] in
+            guard let self else { return }
+            self.bubble = (text, self.now + 2.8, false)
+        }
     }
 
     private func say(_ line: Line, to partner: Character? = nil, app: String = "", thought: Bool = false) {
@@ -375,6 +388,10 @@ final class Pet {
             // The campfire and the skewers are drawn in her own skills row.
             return engage([.face(f), .line(.grill, to: nil), .play(.grill, 6),
                            .play(.happy, 1.6, effect: .heart, say: .grillDone)])
+        case .bugWatch:
+            // Crouches with the magnifying glass over a beetle in the grass (her own skills row).
+            return engage([.face(f), .play(.bugWatch, 5.5, say: .bugWatch),
+                           .play(.happy, 0.8, effect: .sparkle)])
         default:
             return plan(for: .wander)
         }
@@ -614,6 +631,21 @@ final class Pet {
         clampToScreens(CGPoint(x: other.position.x + (position.x < other.position.x ? -60 : 60), y: other.position.y))
     }
 
+    /// Friends who seek each other out: when one feels social, she goes to the other first, wherever she is.
+    /// Loulan seeks Maomao out too; Maomao does not return the favour while she is a consort.
+    private static let bestFriends = ["shisui": "maomao", "maomao": "shisui", "loulan": "maomao"]
+
+    /// Whether this is Maomao facing Shisui dressed as Loulan: polite, a step back, on her guard.
+    private func wary(of other: Pet) -> Bool { character.id == "maomao" && other.character.id == "loulan" }
+
+    /// Switches to another look of the same pet (Shisui <-> Loulan): its sheet, lines and moves.
+    private func setLook(_ look: Character) {
+        view.puff()
+        character = look
+        sheet = SpriteSheet.named(look.id)
+        setAnim(.idle)
+    }
+
     private func socialPlan() -> [Step] {
         let others = world.pets.values.filter { $0 !== self && $0.inRoom == inRoom }
         // Pranksters (and sometimes the others) wake up sleeping friends.
@@ -625,16 +657,29 @@ final class Pet {
                            .run { [weak self, weak sleeper] in if let self, let sleeper { sleeper.receive(.woken(self)) } },
                            .play(.happy, 1.4, effect: .note)])
         }
-        // Only friends close enough to reach before they get tired of waiting.
-        let nearest = others.filter { $0.isAvailable && hypot($0.position.x - position.x, $0.position.y - position.y) < 900 }.min {
+        // A best friend in the same place comes first (3 times in 4), however far away she is.
+        let bestFriend = Pet.bestFriends[character.id].flatMap { id in others.first { $0.isAvailable && $0.character.id == id } }
+        // Otherwise only friends close enough to reach before they get tired of waiting.
+        let nearest = bestFriend.flatMap { Double.random(in: 0..<1) < 0.75 ? $0 : nil } ?? others.filter { $0.isAvailable && hypot($0.position.x - position.x, $0.position.y - position.y) < 900 }.min {
             hypot($0.position.x - position.x, $0.position.y - position.y) < hypot($1.position.x - position.x, $1.position.y - position.y)
         }
         guard let friend = nearest else { return plan(for: .wander) }
         friend.receive(.invite(self))
+        let talkChance = friend === bestFriend ? 0.85 : 0.6
+        if Double.random(in: 0..<1) < talkChance, let talk = character.pairTalk(with: friend.character), talk.count == 3 {
+            return engage([.walk(beside(friend)),
+                           .face(direction(to: friend)),
+                           speak(talk[0]),
+                           .play(.idle, 2.6),
+                           .run { [weak self, weak friend] in if let self, let friend { friend.receive(.talk(self, talk[1])) } },
+                           .play(.idle, 2.8),
+                           speak(talk[2]),
+                           .play(.happy, 1.6, effect: .note)])
+        }
         return engage([.walk(beside(friend)),
                        .face(direction(to: friend)),
                        .line(.greet, to: friend.character),
-                       .play(.happy, 1.4, effect: .heart),
+                       wary(of: friend) ? .play(.idle, 1.4, effect: .sweat) : .play(.happy, 1.4, effect: .heart),
                        .run { [weak self, weak friend] in if let self, let friend { friend.receive(.greet(self)) } },
                        .play(.idle, 1.2)])
     }
@@ -663,6 +708,13 @@ final class Pet {
             guard isAvailable else { return }
             // Wait for the visitor to arrive.
             interrupt(engage([.face(direction(to: other)), .play(.idle, 6)]))
+        case .greet(let other) where wary(of: other):
+            // Maomao steps back from Loulan, bows and keeps an eye on her.
+            interrupt([.play(.surprised, 0.4, effect: .exclaim),
+                       .walk(clampToScreens(CGPoint(x: position.x - direction(to: other) * 70, y: position.y))),
+                       .face(direction(to: other)),
+                       .line(.waryLoulan, to: other.character),
+                       .play(.idle, 1.6, effect: .sweat)])
         case .greet(let other):
             let flustered: [Step] = character.shy ? [.play(.surprised, 0.5, effect: .exclaim)] : []
             interrupt(flustered + [.face(direction(to: other)),
@@ -708,6 +760,9 @@ final class Pet {
                        .line(.chased, to: chaser.character),
                        .walk(clampToScreens(CGPoint(x: position.x + away * 300, y: position.y))),
                        .play(.happy, 1, effect: .note)])
+        case .talk(let friend, let text):
+            interrupt([.face(direction(to: friend)), speak(text), .play(.idle, 2.6),
+                       wary(of: friend) ? .play(.idle, 1.2, effect: .sweat) : .play(.happy, 1.2)])
         case .comfort(let friend):
             boredom = 0
             interrupt([.face(direction(to: friend)),
@@ -759,7 +814,7 @@ final class Pet {
 
     private func skillPlan(_ skill: Skill) -> [Step] {
         switch skill {
-        case .yoyo, .balloon, .eat, .lift, .sake, .grill:
+        case .yoyo, .balloon, .eat, .lift, .sake, .grill, .bugWatch:
             return drawnSkillPlan(skill)
         case .mindRead:
             // Whatever app you are in is what's on your mind.
@@ -861,6 +916,34 @@ final class Pet {
                     .run { [weak self] in self?.view.sparks(color: CGColor(srgbRed: 0.5, green: 0.9, blue: 0.55, alpha: 1), for: 2.4) },
                     .play(.skill2, 2.2),
                     .play(.happy, 1.2, effect: .sparkle)]
+        case .bugNet:
+            // Swings the net (the catch lands on frame 5) and ends holding up the jar (her last frame).
+            return [.play(.skill1, 2.6, say: .bugNet),
+                    .play(.happy, 1, effect: .sparkle)]
+        case .cordyceps:
+            // Digs, then holds up a cicada with a mushroom on frame 5; Maomao, if she is free, rushes over for it.
+            return [.play(.skill2, 0.65, say: .cordyceps),
+                    .run { [weak self] in self?.callMaomao() },
+                    .play(.skill2, 2.4, effect: .exclaim),
+                    .play(.happy, 1, effect: .heart)]
+        case .transform:
+            // A puff of smoke and Shisui is consort Loulan; she greets everyone with a bow.
+            return [.play(.happy, 0.8, say: .transform),
+                    .run { [weak self] in self?.setLook(loulanLook) },
+                    .play(.skill1, 1.6, effect: .sparkle, say: .gokigenyou),
+                    .play(.idle, 0.6)]
+        case .gokigenyou:
+            // An elegant bow with her hands in her sleeves (skill1 row of loulan.png).
+            return [.play(.skill1, 2.2, say: .gokigenyou),
+                    .play(.idle, 0.8, effect: .sparkle)]
+        case .sleeveSmile:
+            // Hides a smile behind her sleeve (skill2 row of loulan.png).
+            return [.play(.skill2, 2.4, say: .sleeveSmile),
+                    .play(.idle, 0.6)]
+        case .transformBack:
+            return [.play(.idle, 0.8, say: .transformBack),
+                    .run { [weak self] in guard let self else { return }; self.setLook(self.baseCharacter) },
+                    .play(.happy, 1.2, effect: .note)]
         case .oniForm:
             return engage([.play(.surprised, 0.4, effect: .exclaim),
                            .run { [weak self] in self?.view.aura(for: 4) },
@@ -1277,6 +1360,16 @@ final class Pet {
     private static let steel = CGColor(srgbRed: 0.85, green: 0.9, blue: 0.95, alpha: 0.9)
     private static let thunder = CGColor(srgbRed: 1, green: 0.85, blue: 0.25, alpha: 1)
     private static let cursed = CGColor(srgbRed: 0.35, green: 0.55, blue: 1, alpha: 1)
+    /// Shisui found a cordyceps: Maomao, if she is free, comes over with sparkling eyes to ask for it.
+    private func callMaomao() {
+        guard let maomao = world.pets.values.first(where: { $0.character.id == "maomao" && $0.inRoom == inRoom }),
+              maomao.isAvailable else { return }
+        maomao.interrupt(maomao.engage([.walk(maomao.beside(self)),
+                                        .face(maomao.direction(to: self)),
+                                        .line(.cordycepsWant, to: character),
+                                        .play(.happy, 1.6, effect: .sparkle)]))
+    }
+
     private static let purple = CGColor(srgbRed: 0.65, green: 0.3, blue: 1, alpha: 1)
     private static let scarlet = CGColor(srgbRed: 1, green: 0.15, blue: 0.2, alpha: 1)
 
