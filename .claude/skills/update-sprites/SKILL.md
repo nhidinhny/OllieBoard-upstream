@@ -28,6 +28,10 @@ Check `Sources/OllieBoard/SpriteSheet.swift`, `Resources/Sprites/layout.json` un
 
 For a new animation with a prop (a skill) or a main-sheet row that is soft or lost its feet, draw it from the character's current sprite instead of the model-sheet flow below: read [skill-rows](references/skill-rows.md) (`gen_skill_prompts.py` writes the task, `build_skill_rows.py` builds `<id>-skills.png` / replaces rows, `skill_rows.json` holds the options).
 
+## A whole sheet in the game's style
+
+For a new character, or a whole sheet that must sit next to the existing sprites, prefer the 4 × 2 grid route in [gemini-grid](references/gemini-grid.md): it attaches frames of a character already in the game as Gemini's style reference (no fan art needed), draws every row as a 4 × 2 grid, and `assemble_grid.py` scales the sheet to that character's height and can match its skin tone or remove a magenta cast.
+
 ## Generate
 
 1. Select an existing id with `python3 scripts/sprites/gen_prompts.py --list`. Read its `CHARACTERS` entry and compare it with the current design and skill plan; the table is a snapshot, not the source of truth.
