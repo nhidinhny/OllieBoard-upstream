@@ -39,6 +39,17 @@
       }
     ]
   },
+  "shisui": {
+    "rows": [
+      {
+        "fps": 8,
+        "frames": 8,
+        "loop": true,
+        "name": "bugWatch",
+        "shift": 0
+      }
+    ]
+  },
   "zoro": {
     "rows": [
       {
