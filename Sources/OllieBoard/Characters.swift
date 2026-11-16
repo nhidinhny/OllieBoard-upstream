@@ -72,6 +72,9 @@ struct Character {
     var dialogueID: String? = nil
     var fixedName: String? = nil
     var skills: [Skill] = []
+    /// Points per second when running. Default walkSpeed x 2.2; set it when the walk was slowed down to keep the
+    /// walk row's feet planted (fps tied to speed, see gait.json) but the run should stay as fast.
+    var runSpeed: Double? = nil
 }
 
 extension AgentKind {
@@ -121,9 +124,10 @@ let allCharacters: [Character] = [
         weights: [.wander: 2, .kick: 1, .arrange: 0.7, .bored: 1.5, .sleep: 3, .grumpy: 0.5, .happy: 1.5, .social: 2, .skill: 1.2],
         grumpyAnim: .sad, shy: true, prankster: false, skills: [.thunderclap, .clingCry]),
     Character(
-        id: "luffy", name: "Monkey D. Luffy", series: .onePiece, walkSpeed: 115,
+        id: "luffy", name: "Monkey D. Luffy", series: .onePiece, walkSpeed: 74,
         weights: [.wander: 3, .kick: 3.5, .arrange: 0.3, .bored: 1, .sleep: 1.5, .grumpy: 0.5, .happy: 3, .social: 3, .skill: 1.2],
-        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.gomuPistol, .gear5]),
+        grumpyAnim: .grumpy, shy: false, prankster: true, skills: [.gomuPistol, .gear5],
+        runSpeed: 185),   // walk slowed to 74 for the 6 fps redrawn walk; 6-frame jog at 8.4 fps runs at 185
     Character(
         id: "zoro", name: "Roronoa Zoro", series: .onePiece, walkSpeed: 90,
         weights: [.wander: 2.5, .kick: 2, .arrange: 0.5, .bored: 1, .sleep: 4, .grumpy: 1, .happy: 0.5, .social: 0.8, .skill: 1.2],

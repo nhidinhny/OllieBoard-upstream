@@ -62,13 +62,26 @@ final class SpriteSheet {
 
     static func effect(_ effect: Effect) -> CGImage? { effects[effect] }
 
+    /// Per-character overrides of a row's frame count and fps (gait.json). A walk or run drawn with fewer, longer
+    /// strides plays at its own speed so the planted foot stays put on the ground.
+    private struct GaitOverride: Decodable { let frames: Int?; let fps: Double? }
+    private static let gait: [String: [String: GaitOverride]] = {
+        guard let data = try? Data(contentsOf: directory.appendingPathComponent("gait.json")) else { return [:] }
+        return (try? JSONDecoder().decode([String: [String: GaitOverride]].self, from: data)) ?? [:]
+    }()
+
     private var frames: [Anim: [CGImage]] = [:]
+    private var info: [Anim: SheetLayout.AnimInfo] = [:]
 
     private init(characterID: String, skills: Bool) {
         let layout = Self.layout
         for anim in Anim.allCases where skills || !anim.isSkill {
-            guard let info = layout.animations[anim.rawValue] else { continue }
-            frames[anim] = Self.cells(of: characterID, (0..<info.frames).map { ($0, info.row) })
+            guard var row = layout.animations[anim.rawValue] else { continue }
+            if let over = Self.gait[characterID]?[anim.rawValue] {
+                row = SheetLayout.AnimInfo(row: row.row, frames: over.frames ?? row.frames, fps: over.fps ?? row.fps, loop: row.loop)
+            }
+            info[anim] = row
+            frames[anim] = Self.cells(of: characterID, (0..<row.frames).map { ($0, row.row) })
         }
     }
 
@@ -101,13 +114,13 @@ final class SpriteSheet {
 
     /// Frame of `anim` after it has been playing for `elapsed` seconds.
     func frame(_ anim: Anim, elapsed: TimeInterval) -> CGImage? {
-        guard let list = frames[anim], let info = Self.layout.animations[anim.rawValue] else { return nil }
+        guard let list = frames[anim], let info = info[anim] else { return nil }
         let i = Int(elapsed * info.fps)
         return list[info.loop ? i % list.count : min(i, list.count - 1)]
     }
 
     func duration(_ anim: Anim) -> TimeInterval {
-        guard let info = Self.layout.animations[anim.rawValue] else { return 0 }
+        guard let info = info[anim] else { return 0 }
         return Double(info.frames) / info.fps
     }
 

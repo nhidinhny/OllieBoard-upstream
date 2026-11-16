@@ -186,7 +186,7 @@ final class Pet {
             let dx = target.x - position.x, dy = target.y - position.y
             let dist = hypot(dx, dy)
             let fast = carrying == nil && dist > 450
-            let speed = character.walkSpeed * (carrying != nil ? 0.75 : fast ? 2.2 : 1)
+            let speed = carrying != nil ? character.walkSpeed * 0.75 : fast ? (character.runSpeed ?? character.walkSpeed * 2.2) : character.walkSpeed
             setAnim(carrying != nil ? .carry : fast ? .run : .walk)
             if abs(dx) > 1 { facing = dx > 0 ? 1 : -1 }
             let len = CGFloat(speed * dt)
