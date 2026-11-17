@@ -32,7 +32,7 @@ Do not add a procedural `Look` in `Sources/SpriteGen/Looks.swift` for an image-g
 
 ## Create the sprite
 
-Read [update-sprites](../update-sprites/SKILL.md), select the user's requested provider, and follow the matching native-atlas or Gemini-strip route on either host.
+Read [update-sprites](../update-sprites/SKILL.md), select the user's requested provider, and follow the matching native-atlas or Gemini-strip route on either host. Once the sheet is in, give the walk and run their own fps with [gemini-gait-prompts](../gemini-gait-prompts/SKILL.md) (`gait_step.py`, `gait.json`), or the feet slide.
 
 1. Add the id to `CHARACTERS` in `scripts/sprites/gen_prompts.py`: full name, appearance, and two explicit frame-by-frame skill descriptions including impact frames. Add original designs to `ORIGINAL` and supply `--reference`.
 2. Generate the model/animation artwork, assemble without installing, inspect the source images and preview, and regenerate failed poses. Match the character's intended skin/fur colours. For the Gemini strip route only, add non-human characters to `NO_SKIN_FILTER` if needed.

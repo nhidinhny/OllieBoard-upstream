@@ -28,6 +28,10 @@ Check `Sources/OllieBoard/SpriteSheet.swift`, `Resources/Sprites/layout.json` un
 
 For a new animation with a prop (a skill) or a main-sheet row that is soft or lost its feet, draw it from the character's current sprite instead of the model-sheet flow below: read [skill-rows](references/skill-rows.md) (`gen_skill_prompts.py` writes the task, `build_skill_rows.py` builds `<id>-skills.png` / replaces rows, `skill_rows.json` holds the options).
 
+## Walk and run rows
+
+A redrawn walk or run needs its own fps so the feet do not slide (`gait.json`, `walkSpeed` / `runSpeed`). Follow the `gemini-gait-prompts` skill: prompts, `scripts/sprites/gait_step.py`, and the fixes for a limping or stuttering gait.
+
 ## A whole sheet in the game's style
 
 For a new character, or a whole sheet that must sit next to the existing sprites, prefer the 4 × 2 grid route in [gemini-grid](references/gemini-grid.md): it attaches frames of a character already in the game as Gemini's style reference (no fan art needed), draws every row as a 4 × 2 grid, and `assemble_grid.py` scales the sheet to that character's height and can match its skin tone or remove a magenta cast.

@@ -1,8 +1,9 @@
 # Mikoto walk: all 6 poses in ONE generation (2026-11-15, option 2)
 
 Attach in this order, fresh Gemini Pro chat:
-1. raw/mikoto_style_ref.png  (W4_armswap cropped, no sparkle) = STYLE
-2. raw/mikoto_mq_strip6.png  (6 slim dressed mannequins, DRESS=1 SLIM=0.6) = POSE ONLY
+1. one crisp drawing of the character from the game (sparkle cropped off) = STYLE
+2. a strip of 6 slim dressed mannequins (contact, passing, swing, then the same with the legs traded; near leg with
+   a white sock, far leg with a grey-blue one, the forward leg drawn on top; see SKILL.md section 4) = POSE ONLY
 
 Prompt:
 
