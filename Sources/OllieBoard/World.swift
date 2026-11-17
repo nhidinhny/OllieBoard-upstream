@@ -18,6 +18,17 @@ final class World {
     private var lastRefresh: TimeInterval = 0
 
     private let agentsKey = "agentCharacters"
+    private let hiddenKey = "allHidden"
+
+    /// Quick switch: hides every character, agent mascot and the play room without forgetting who was on.
+    var allHidden: Bool {
+        get { UserDefaults.standard.bool(forKey: hiddenKey) }
+        set {
+            UserDefaults.standard.set(newValue, forKey: hiddenKey)
+            pets.values.forEach { $0.setSuppressed(newValue) }
+            room.setSuppressed(newValue)
+        }
+    }
     private let disabledKindsKey = "disabledAgentKinds"
 
     /// Whether running AI agents get their own characters.
@@ -42,6 +53,7 @@ final class World {
         room.onMembersChange = { [weak self] in self?.pets.values.forEach { $0.moveIntoRoom() } }
         room.onMove = { [weak self] shift in self?.pets.values.forEach { $0.followRoom(by: shift) } }
         room.start()
+        room.setSuppressed(allHidden)
         let timer = Timer(timeInterval: 1.0 / 30, repeats: true) { [weak self] _ in self?.tick() }
         RunLoop.main.add(timer, forMode: .common)   // keep animating while menus are open
         self.timer = timer
@@ -68,6 +80,7 @@ final class World {
             let pet = Pet(character: character, world: self,
                           position: CGPoint(x: min(x, f.maxX - 60), y: f.minY + 10))
             pets[character.id] = pet
+            pet.setSuppressed(allHidden)
             pet.show()
             pet.moveIntoRoom()
         } else if !enabled, let pet = pets.removeValue(forKey: character.id) {
@@ -88,6 +101,7 @@ final class World {
             let pet = Pet(character: character, world: self, position: .zero, agent: session)
             pets[character.id] = pet
             agentPets[pid] = pet
+            pet.setSuppressed(allHidden)
             pet.update(agent: session)
         }
         for (pid, pet) in agentPets where sessions[pid] == nil {
