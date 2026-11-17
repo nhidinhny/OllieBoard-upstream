@@ -3,6 +3,7 @@ import Foundation
 /// Labels for the menus, alerts and the play room; what the characters say lives in the Dialogue files.
 enum UIText {
     case characters, playRoom, agentCharacters, chooseAgents
+    case hideAll, showAll
     case agentIdle, agentWorking, agentDone, agentNeedsYou
     case hookInstalled, installHook
     case finderBlocked, openAutomation, sortByLocked, turnOffSortBy, quit
@@ -27,6 +28,8 @@ func ui(_ key: UIText, _ argument: String = "") -> String {
 
 private let uiTexts: [Language: [UIText: String]] = [
     .vi: [
+        .hideAll: "Ẩn tất cả",
+        .showAll: "Hiện tất cả",
         .characters: "Nhân vật",
         .playRoom: "Phòng chơi",
         .agentCharacters: "Nhân vật cho AI agent",
@@ -76,6 +79,8 @@ private let uiTexts: [Language: [UIText: String]] = [
         .updateNoPermission: "OllieBoard không có quyền ghi vào %@. Hãy tải bản mới từ trang Releases và cài thủ công.",
     ],
     .en: [
+        .hideAll: "Hide all",
+        .showAll: "Show all",
         .characters: "Characters",
         .playRoom: "Play room",
         .agentCharacters: "Characters for AI agents",
@@ -125,6 +130,8 @@ private let uiTexts: [Language: [UIText: String]] = [
         .updateNoPermission: "OllieBoard can't write to %@. Download the new version from the Releases page and install it by hand.",
     ],
     .ja: [
+        .hideAll: "すべて隠す",
+        .showAll: "すべて表示",
         .characters: "キャラクター",
         .playRoom: "プレイルーム",
         .agentCharacters: "AIエージェントのキャラクター",

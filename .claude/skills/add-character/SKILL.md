@@ -32,13 +32,17 @@ Do not add a procedural `Look` in `Sources/SpriteGen/Looks.swift` for an image-g
 
 ## Create the sprite
 
-Read [update-sprites](../update-sprites/SKILL.md), select the user's requested provider, and follow the matching native-atlas or Gemini-strip route on either host.
+Read [update-sprites](../update-sprites/SKILL.md), select the user's requested provider, and follow the matching native-atlas or Gemini-strip route on either host. Once the sheet is in, give the walk and run their own fps with [gemini-gait-prompts](../gemini-gait-prompts/SKILL.md) (`gait_step.py`, `gait.json`), or the feet slide.
 
 1. Add the id to `CHARACTERS` in `scripts/sprites/gen_prompts.py`: full name, appearance, and two explicit frame-by-frame skill descriptions including impact frames. Add original designs to `ORIGINAL` and supply `--reference`.
 2. Generate the model/animation artwork, assemble without installing, inspect the source images and preview, and regenerate failed poses. Match the character's intended skin/fur colours. For the Gemini strip route only, add non-human characters to `NO_SKIN_FILTER` if needed.
 3. Install the accepted sheet with the chosen route's packer (`assemble_atlas.py` for native RGBA, `assemble.py` for Gemini strips) and `--install`. Check the 2048 × 4096 RGBA sheet and `custom-sheets.txt` entry.
 
 If the browser or image tools are unavailable, leave the task/prompts ready and report art as pending. Do not report a character complete while its sheet or visual checks are missing.
+
+For the Gemini route, [gemini-grid](../update-sprites/references/gemini-grid.md) draws the sheet in the same style and size as a character already in the game (attach the user's pictures of the character plus the style strip it makes).
+
+Once the character has a sheet it can also get skills (an animation drawn together with a prop) and rows redrawn from its current sprite: see `update-sprites/references/skill-rows.md`. That route reuses the sprite in the game as Gemini's reference, which keeps the proportions on-model.
 
 ## Verify and hand off
 

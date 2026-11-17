@@ -31,6 +31,8 @@ final class Room {
     private(set) var isOpen: Bool
     private(set) var members: Set<String>
     private(set) var editing = false
+    /// "Hide all" in the menu: the room window stays away without touching the saved open state.
+    private(set) var suppressed = false
     private(set) var frame: CGRect
     private(set) var scene: RoomScene
 
@@ -98,6 +100,11 @@ final class Room {
 
     // MARK: Changes from the menu
 
+    func setSuppressed(_ on: Bool) {
+        suppressed = on
+        apply()
+    }
+
     func setOpen(_ open: Bool) {
         isOpen = open
         if !open { editing = false }
@@ -135,7 +142,7 @@ final class Room {
     func saveFrame() { UserDefaults.standard.set(NSStringFromRect(frame), forKey: frameKey) }
 
     private func apply() {
-        guard isOpen else { return window.orderOut(nil) }
+        guard isOpen, !suppressed else { return window.orderOut(nil) }
         window.setFrame(frame, display: false)
         window.level = level
         window.ignoresMouseEvents = !editing
